@@ -1,0 +1,20 @@
+mysql:
+  image: mysql:latest
+  environment:
+    - MYSQL_USER=mattermost
+    - MYSQL_PASSWORD=password
+    - MYSQL_DATABASE=mattermost
+    - MYSQL_ROOT_PASSWORD=password
+
+mattermost:
+  build: .
+  links:
+    - mysql:mysql
+  ports:
+    - "80:80"
+  environment:
+    - MATTERMOST_HOST=www.example.com
+    - MATTERMOST_SECRET_KEY=long-and-random-alphanumeric-string
+    - MATTERMOST_LINK_SALT=long-and-random-alphanumeric-string
+    - MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string
+    - MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string

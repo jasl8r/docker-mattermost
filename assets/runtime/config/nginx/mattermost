@@ -1,0 +1,36 @@
+upstream mattermost {
+    server 127.0.0.1:{{MATTERMOST_PORT}} fail_timeout=0;
+}
+
+server {
+    ## Either remove "default_server" from the listen line below,
+    ## or delete the /etc/nginx/sites-enabled/default file. This will cause mattermost
+    ## to be served if you visit any address that your server responds to, eg.
+    ## the ip address of the server (http://x.x.x.x/)n 0.0.0.0:80 default_server;
+    listen 0.0.0.0:80 default_server;
+    listen [::]:80 default_server;
+    server_name {{MATTERMOST_HOST}}; ## Replace this with something like mattermost.example.com
+    server_tokens off; ## Don't show the nginx version number, a security best practice
+
+    ## Individual nginx logs for this mattermost vhost
+    access_log  {{MATTERMOST_LOG_DIR}}/nginx/mattermost_access.log;
+    error_log   {{MATTERMOST_LOG_DIR}}/nginx/mattermost_error.log;
+
+    location / {
+        gzip off;
+
+        client_max_body_size 50M;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Frame-Options SAMEORIGIN;
+        proxy_pass http://mattermost;
+    }
+
+    location /static {
+        root {{MATTERMOST_INSTALL_DIR}}/web;
+    }
+}

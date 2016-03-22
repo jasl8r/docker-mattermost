@@ -1,0 +1,211 @@
+#!/bin/bash
+set -e
+set -x
+source ${MATTERMOST_RUNTIME_DIR}/env-defaults
+
+SYSCONF_TEMPLATES_DIR="${MATTERMOST_RUNTIME_DIR}/config"
+
+MATTERMOST_CONFIG="${MATTERMOST_CONF_DIR}/config.json"
+NGINX_CONFIG="/etc/nginx/sites-enabled/mattermost"
+
+## Copies configuration template to the destination as the specified USER
+### Looks up for overrides in ${USERCONF_TEMPLATES_DIR} before using the defaults from ${SYSCONF_TEMPLATES_DIR}
+# $1: copy-as user
+# $2: source file
+# $3: destination location
+# $4: mode of destination
+install_template() {
+  local OWNERSHIP=${1}
+  local SRC=${2}
+  local DEST=${3}
+  local MODE=${4:-0644}
+  if [[ -f ${SYSCONF_TEMPLATES_DIR}/${SRC} ]]; then
+    cp ${SYSCONF_TEMPLATES_DIR}/${SRC} ${DEST}
+  fi
+  chmod ${MODE} ${DEST}
+  chown ${OWNERSHIP} ${DEST}
+}
+
+## Replace placeholders with values
+# $1: file with placeholders to replace
+# $x: placeholders to replace
+update_template() {
+  local FILE=${1?missing argument}
+  shift
+
+  [[ ! -f ${FILE} ]] && return 1
+
+  local VARIABLES=($@)
+  local USR=$(stat -c %U ${FILE})
+  local tmp_file=$(mktemp)
+  cp -a "${FILE}" ${tmp_file}
+
+  local variable
+  for variable in ${VARIABLES[@]}; do
+    # Keep the compatibilty: {{VAR}} => ${VAR}
+    sed -ri "s/[{]{2}$variable[}]{2}/\${$variable}/g" ${tmp_file}
+  done
+
+  # Replace placeholders
+  (
+    export ${VARIABLES[@]}
+    local IFS=":"; sudo -HEu ${USR} envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
+  )
+  rm -f ${tmp_file}
+}
+
+initialize_datadir() {
+  echo "Initializing datadir..."
+  chmod 755 ${MATTERMOST_DATA_DIR}
+}
+
+initialize_logdir() {
+  echo "Initializing logdir..."
+  mkdir -p ${MATTERMOST_LOG_DIR}
+  mkdir -p ${MATTERMOST_LOG_DIR}/nginx
+  mkdir -p ${MATTERMOST_LOG_DIR}/supervisor
+  
+  chmod -R 0755 ${MATTERMOST_LOG_DIR}
+  chown -R root: ${MATTERMOST_LOG_DIR}
+}
+
+install_configuration_templates() {
+  echo "Installing configuration templates..."
+  
+  mkdir -p ${MATTERMOST_CONF_DIR}
+  
+  install_template root: config.json ${MATTERMOST_CONFIG} 0640
+  install_template root: nginx/mattermost ${NGINX_CONFIG} 0640
+}
+
+finalize_database_parameters() {
+  # is a mysql database linked?
+  # requires that the mysql container has exposed port 3306.
+  if [[ -n ${MYSQL_PORT_3306_TCP_ADDR} ]]; then
+    DB_ADAPTER=${DB_ADAPTER:-mysql}
+    DB_HOST=${DB_HOST:-${MYSQL_PORT_3306_TCP_ADDR}}
+    DB_PORT=${DB_PORT:-${MYSQL_PORT_3306_TCP_PORT}}
+    DB_USER=${DB_USER:-${MYSQL_ENV_MYSQL_USER}}
+    DB_PASS=${DB_PASS:-${MYSQL_ENV_MYSQL_PASSWORD}}
+    DB_ROOT_PASS=${DB_ROOT_PASS:-${MYSQL_ENV_MYSQL_ROOT_PASSWORD}}
+  fi
+
+  if [[ -z ${DB_HOST} ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Please configure the database connection."
+    echo "  Cannot continue without a database. Aborting..."
+    echo
+    return 1
+  fi
+
+  # set default port number if not specified
+  DB_ADAPTER=${DB_ADAPTER:-mysql}
+  case ${DB_ADAPTER} in
+    mysql)
+      DB_ENCODING=${DB_ENCODING:-utf8}
+      DB_PORT=${DB_PORT:-3306}
+      ;;
+    *)
+      echo
+      echo "ERROR: "
+      echo "  Please specify the database type in use via the DB_ADAPTER configuration option."
+      echo "  Accepted value is \"mysql\". Aborting..."
+      echo
+      return 1
+      ;;
+  esac
+
+  # set default user and database
+  DB_USER=${DB_USER:-root}
+  DB_NAME=${DB_NAME:-mattermost}
+}
+
+check_database_connection() {
+  case ${DB_ADAPTER} in
+    mysql)
+      prog="mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status"
+      ;;
+  esac
+  timeout=60
+  while ! ${prog} >/dev/null 2>&1
+  do
+    timeout=$(expr $timeout - 1)
+    if [[ $timeout -eq 0 ]]; then
+      echo
+      echo "Could not connect to database server. Aborting..."
+      return 1
+    fi
+    echo -n "."
+    sleep 1
+  done
+  echo
+}
+
+configure_database() {
+  echo -n "Configuring mattermost database..."
+
+  finalize_database_parameters
+  check_database_connection
+
+  update_template ${MATTERMOST_CONFIG} \
+    DB_ADAPTER \
+    DB_ENCODING \
+    DB_HOST \
+    DB_PORT \
+    DB_USER \
+    DB_PASS \
+    DB_NAME
+}
+
+configure_mattermost() {
+  update_template ${MATTERMOST_CONFIG} \
+    MATTERMOST_NAME \
+    MATTERMOST_PORT \
+    MATTERMOST_SECRET_KEY \
+    MATTERMOST_LINK_SALT \
+    MATTERMOST_RESET_SALT \
+    MATTERMOST_INVITE_SALT \
+    MATTERMOST_DATA_DIR
+}
+
+configure_smtp() {
+  if [[ -n ${SMTP_HOST} ]]; then
+    echo "Configuring SMTP..."
+    update_template ${MATTERMOST_CONFIG} \
+      SMTP_USER \
+      SMTP_PASS \
+      SMTP_HOST \
+      SMTP_PORT \
+      SMTP_TLS \
+      MATTERMOST_EMAIL \
+      MATTERMOST_NAME
+  else
+    sed -i "/SendEmailNotifications/,/SMTPPort/d" ${MATTERMOST_CONFIG}
+  fi
+}
+
+configure_nginx() {
+  echo "Configuring nginx..."
+  update_template ${NGINX_CONFIG} \
+    MATTERMOST_HOME \
+    MATTERMOST_HOST \
+    MATTERMOST_PORT \
+    MATTERMOST_LOG_DIR \
+    MATTERMOST_INSTALL_DIR
+}
+
+initialize() {
+  echo "Initializing mattermost..."
+  initialize_datadir
+  initialize_logdir
+  install_configuration_templates
+}
+
+configure() {
+  echo "Configuring mattermost..."
+  configure_database
+  configure_mattermost
+  configure_smtp
+  configure_nginx
+}
