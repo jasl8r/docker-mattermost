@@ -36,7 +36,7 @@
         "EnableFile": true,
         "FileLevel": "INFO",
         "FileFormat": "",
-        "FileLocation": ""
+        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log"
     },
     "FileSettings": {
         "DriverName": "local",
