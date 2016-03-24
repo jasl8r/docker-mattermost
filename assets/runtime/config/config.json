@@ -56,7 +56,7 @@
         "AmazonS3Region": ""
     },
     "EmailSettings": {
-        "EnableSignUpWithEmail": true,
+        "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
         "SendEmailNotifications": true,
         "RequireEmailVerification": true,
         "FeedbackName": "{{MATTERMOST_NAME}}",
