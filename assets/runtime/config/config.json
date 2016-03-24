@@ -84,12 +84,12 @@
         "ShowFullName": true
     },
     "GitLabSettings": {
-        "Enable": false,
-        "Secret": "",
-        "Id": "",
-        "Scope": "",
-        "AuthEndpoint": "",
-        "TokenEndpoint": "",
-        "UserApiEndpoint": ""
+        "Enable": true,
+        "Secret": "{{GITLAB_SECRET}}",
+        "Id": "{{GITLAB_ID}}",
+        "Scope": "{{GITLAB_SCOPE}}",
+        "AuthEndpoint": "{{GITLAB_AUTH_ENDPOINT}}",
+        "TokenEndpoint": "{{GITLAB_TOKEN_ENDPOINT}}",
+        "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}"
     }
 }

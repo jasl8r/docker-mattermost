@@ -186,6 +186,21 @@ configure_smtp() {
   fi
 }
 
+configure_gitlab() {
+  if [[ -n ${GITLAB_SECRET} ]]; then
+    echo "Configuring GitLab..."
+    update_template ${MATTERMOST_CONFIG} \
+      GITLAB_SECRET \
+      GITLAB_ID \
+      GITLAB_SCOPE \
+      GITLAB_AUTH_ENDPOINT \
+      GITLAB_TOKEN_ENDPOINT \
+      GITLAB_API_ENDPOINT
+  else
+    perl -i -pe 'BEGIN{undef $/;} s/(,\s*)?"GitLabSettings".*?\s+}//smg' ${MATTERMOST_CONFIG}
+  fi
+}
+
 configure_nginx() {
   echo "Configuring nginx..."
   update_template ${NGINX_CONFIG} \
@@ -208,5 +223,6 @@ configure() {
   configure_database
   configure_mattermost
   configure_smtp
+  configure_gitlab
   configure_nginx
 }
