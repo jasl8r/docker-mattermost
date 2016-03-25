@@ -1,25 +1,34 @@
 {
     "ServiceSettings": {
         "ListenAddress": ":{{MATTERMOST_PORT}}",
-        "MaximumLoginAttempts": 10,
-        "SegmentDeveloperKey": "",
-        "GoogleDeveloperKey": "",
+        "MaximumLoginAttempts": {{MATTERMOST_MAX_LOGIN_ATTEMPTS}},
+        "SegmentDeveloperKey": "{{MATTERMOST_SEGMENT_KEY}}",
+        "GoogleDeveloperKey": "{{MATTERMOST_GOOGLE_KEY}}",
         "EnableOAuthServiceProvider": false,
-        "EnableIncomingWebhooks": false,
-        "EnableOutgoingWebhooks": false,
-        "EnablePostUsernameOverride": false,
-        "EnablePostIconOverride": false,
+        "EnableIncomingWebhooks": {{MATTERMOST_ENABLE_INCOMING_WEBHOOKS}},
+        "EnableOutgoingWebhooks": {{MATTERMOST_ENABLE_OUTGOING_WEBHOOKS}},
+        "EnableCommands": {{MATTERMOST_ENABLE_SLASH_COMMANDS}},
+        "EnableOnlyAdminIntegrations": {{MATTERMOST_ENABLE_ADMIN_INTEGRATIONS}},
+        "EnablePostUsernameOverride": {{MATTERMOST_WEBHOOK_OVERRIDE_USERNAME}},
+        "EnablePostIconOverride": {{MATTERMOST_WEBHOOK_OVERRIDE_ICON}},
         "EnableTesting": false,
-        "EnableSecurityFixAlert": true
+        "EnableDeveloper": false,
+        "EnableSecurityFixAlert": {{MATTERMOST_ENABLE_ALERTS}},
+        "EnableInsecureOutgoingConnections": {{MATTERMOST_ENABLE_INSECURE_CONNECTIONS}},
+        "AllowCorsFrom": "{{MATTERMOST_CORS_DOMAINS}}",
+        "SessionLengthWebInDays": {{MATTERMOST_WEB_SESSION_DAYS}},
+        "SessionLengthMobileInDays": {{MATTERMOST_MOBILE_SESSION_DAYS}},
+        "SessionLengthSSOInDays": {{MATTERMOST_SSO_SESSION_DAYS}},
+        "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}}
     },
     "TeamSettings": {
         "SiteName": "{{MATTERMOST_NAME}}",
-        "MaxUsersPerTeam": 50,
-        "EnableTeamCreation": true,
-        "EnableUserCreation": true,
-        "RestrictCreationToDomains": "",
-        "RestrictTeamNames": true,
-        "EnableTeamListing": false
+        "MaxUsersPerTeam": {{MATTERMOST_MAX_USERS}},
+        "EnableTeamCreation": {{MATTERMOST_CREATE_TEAMS}},
+        "EnableUserCreation": {{MATTERMOST_CREATE_USERS}},
+        "RestrictCreationToDomains": "{{MATTERMOST_USER_DOMAINS}}",
+        "RestrictTeamNames": {{MATTERMOST_RESTRICT_TEAM_NAMES}},
+        "EnableTeamListing": {{MATTERMOST_TEAM_DIRECTORY}}
     },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
@@ -41,7 +50,7 @@
     "FileSettings": {
         "DriverName": "local",
         "Directory": "{{MATTERMOST_DATA_DIR}}",
-        "EnablePublicLink": true,
+        "EnablePublicLink": {{MATTERMOST_ENABLE_PUBLIC_LINKS}},
         "PublicLinkSalt": "{{MATTERMOST_LINK_SALT}}",
         "ThumbnailWidth": 120,
         "ThumbnailHeight": 100,
@@ -53,12 +62,16 @@
         "AmazonS3AccessKeyId": "",
         "AmazonS3SecretAccessKey": "",
         "AmazonS3Bucket": "",
-        "AmazonS3Region": ""
+        "AmazonS3Region": "",
+        "AmazonS3Endpoint": "",
+        "AmazonS3BucketEndpoint": "",
+        "AmazonS3LocationConstraint": false,
+        "AmazonS3LowercaseBucket": false
     },
     "EmailSettings": {
         "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
-        "SendEmailNotifications": true,
-        "RequireEmailVerification": true,
+        "SendEmailNotifications": {{MATTERMOST_EMAIL_NOTIFICATIONS}},
+        "RequireEmailVerification": {{MATTERMOST_EMAIL_VERIFICATION}},
         "FeedbackName": "{{MATTERMOST_NAME}}",
         "FeedbackEmail": "{{MATTERMOST_EMAIL}}",
         "SMTPUsername": "{{SMTP_USER}}",
@@ -68,20 +81,27 @@
         "ConnectionSecurity": "",
         "InviteSalt": "{{MATTERMOST_INVITE_SALT}}",
         "PasswordResetSalt": "{{MATTERMOST_RESET_SALT}}",
-        "ApplePushServer": "",
-        "ApplePushCertPublic": "",
-        "ApplePushCertPrivate": ""
+        "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},
+        "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}"
     },
     "RateLimitSettings": {
-        "EnableRateLimiter": true,
-        "PerSec": 10,
-        "MemoryStoreSize": 10000,
-        "VaryByRemoteAddr": true,
-        "VaryByHeader": ""
+        "EnableRateLimiter": {{MATTERMOST_ENABLE_RATE_LIMIT}},
+        "PerSec": {{MATTERMOST_RATE_LIMIT_QPS}},
+        "MemoryStoreSize": {{MATTERMOST_RATE_LIMIT_SESSIONS}},
+        "VaryByRemoteAddr": {{MATTERMOST_RATE_LIMIT_BY_IP}},
+        "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}"
     },
     "PrivacySettings": {
-        "ShowEmailAddress": true,
-        "ShowFullName": true
+        "ShowEmailAddress": {{MATTERMOST_SHOW_EMAIL}},
+        "ShowFullName": {{MATTERMOST_SHOW_NAME}}
+    },
+    "SupportSettings": {
+        "TermsOfServiceLink": "/static/help/terms.html",
+        "PrivacyPolicyLink": "/static/help/privacy.html",
+        "AboutLink": "/static/help/about.html",
+        "HelpLink": "/static/help/help.html",
+        "ReportAProblemLink": "/static/help/report_problem.html",
+        "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}"
     },
     "GitLabSettings": {
         "Enable": true,
