@@ -8,6 +8,18 @@ SYSCONF_TEMPLATES_DIR="${MATTERMOST_RUNTIME_DIR}/config"
 MATTERMOST_CONFIG="${MATTERMOST_CONF_DIR}/config.json"
 NGINX_CONFIG="/etc/nginx/sites-enabled/mattermost"
 
+# Compares two version strings `a` and `b`
+# Returns
+#   - negative integer, if `a` is less than `b`
+#   - 0, if `a` and `b` are equal
+#   - non-negative integer, if `a` is greater than `b`
+vercmp() {
+  expr '(' "$1" : '\([^.]*\)' ')' '-' '(' "$2" : '\([^.]*\)' ')' '|' \
+       '(' "$1.0" : '[^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0" : '[^.]*[.]\([^.]*\)' ')' '|' \
+       '(' "$1.0.0" : '[^.]*[.][^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0.0" : '[^.]*[.][^.]*[.]\([^.]*\)' ')' '|' \
+       '(' "$1.0.0.0" : '[^.]*[.][^.]*[.][^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0.0.0" : '[^.]*[.][^.]*[.][^.]*[.]\([^.]*\)' ')'
+}
+
 ## Copies configuration template to the destination as the specified USER
 ### Looks up for overrides in ${USERCONF_TEMPLATES_DIR} before using the defaults from ${SYSCONF_TEMPLATES_DIR}
 # $1: copy-as user
@@ -52,6 +64,24 @@ update_template() {
     local IFS=":"; sudo -HEu ${USR} envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
   )
   rm -f ${tmp_file}
+}
+
+check_version() {
+  # check if the mattermost version has changed.
+  CACHE_VERSION=
+  [[ -f ${MATTERMOST_DATA_DIR}/VERSION ]] && CACHE_VERSION=$(cat ${MATTERMOST_DATA_DIR}/VERSION)
+  if [[ ${MATTERMOST_VERSION} != ${CACHE_VERSION} ]]; then
+    if [[ -n ${CACHE_VERSION} && $(vercmp ${MATTERMOST_VERSION} ${CACHE_VERSION}) -lt 0 ]]; then
+      echo
+      echo "ERROR: "
+      echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+      echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
+      echo "  Cannot continue. Aborting!"
+      echo
+      return 1
+    fi
+  fi
+  echo "${GITLAB_VERSION}" > ${GITLAB_TEMP_DIR}/VERSION
 }
 
 initialize_datadir() {
@@ -252,6 +282,7 @@ configure_nginx() {
 
 initialize() {
   echo "Initializing mattermost..."
+  check_version
   initialize_datadir
   initialize_logdir
   install_configuration_templates
