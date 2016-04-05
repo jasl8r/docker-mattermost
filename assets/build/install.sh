@@ -10,7 +10,7 @@ curl -OL https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-$
 tar xzf mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
 rm mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
 
-# disable default nginx configuration and enable gitlab's nginx configuration
+# disable default nginx configuration and enable mattermost's nginx configuration
 rm -rf /etc/nginx/sites-enabled/default
 
 # move nginx logs to ${MATTERMOST_LOG_DIR}/nginx
