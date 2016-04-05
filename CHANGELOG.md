@@ -7,3 +7,4 @@ for the list of changes in Mattermost.
 ## latest
 - mattermost 2.1.0
 - support gitlab integration
+- support most mattermost configuration parameters
