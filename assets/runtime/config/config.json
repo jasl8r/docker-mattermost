@@ -78,7 +78,7 @@
         "SMTPPassword": "{{SMTP_PASS}}",
         "SMTPServer": "{{SMTP_HOST}}",
         "SMTPPort": "{{SMTP_PORT}}",
-        "ConnectionSecurity": "",
+        "ConnectionSecurity": "{{SMTP_SECURITY}}",
         "InviteSalt": "{{MATTERMOST_INVITE_SALT}}",
         "PasswordResetSalt": "{{MATTERMOST_RESET_SALT}}",
         "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},

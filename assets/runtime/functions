@@ -215,7 +215,7 @@ configure_smtp() {
       SMTP_PASS \
       SMTP_HOST \
       SMTP_PORT \
-      SMTP_TLS \
+      SMTP_SECURITY \
       MATTERMOST_NAME \
       MATTERMOST_EMAIL \
       MATTERMOST_SUPPORT_EMAIL
