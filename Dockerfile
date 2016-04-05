@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER jeremy.slater@nuance.com
+MAINTAINER jasl8r@alum.wpi.edu
 
 ENV MATTERMOST_VERSION=2.1.0 \
     MATTERMOST_HOME="/opt/mattermost"
