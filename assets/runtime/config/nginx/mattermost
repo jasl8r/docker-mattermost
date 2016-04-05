@@ -1,5 +1,5 @@
 upstream mattermost {
-    server 127.0.0.1:{{MATTERMOST_PORT}} fail_timeout=0;
+    server 127.0.0.1:8080 fail_timeout=0;
 }
 
 server {
