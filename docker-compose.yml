@@ -1,4 +1,5 @@
 mysql:
+  restart: always
   image: mysql:latest
   environment:
     - MYSQL_USER=mattermost
@@ -8,6 +9,7 @@ mysql:
 
 mattermost:
   build: .
+  restart: always
   links:
     - mysql:mysql
   ports:
