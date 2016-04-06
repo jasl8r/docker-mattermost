@@ -219,6 +219,75 @@ Here the image will also automatically fetch the `MYSQL_DATABASE`, `MYSQL_USER` 
  - [centurylink/mysql](https://hub.docker.com/r/centurylink/mysql/)
  - [orchardup/mysql](https://hub.docker.com/r/orchardup/mysql/)
 
+### PostgreSQL
+
+#### External PostgreSQL Server
+
+The image also supports using an external PostgreSQL server. This is also controlled via environment variables.
+
+```sql
+CREATE ROLE mattermost with LOGIN CREATEDB PASSWORD 'password';
+CREATE DATABASE mattermost;
+GRANT ALL PRIVILEGES ON DATABASE mattermost to mattermost;
+```
+
+We are now ready to start the Mattermost application.
+
+*Assuming that the PostgreSQL server host is 192.168.1.100*
+
+```bash
+docker run --name mattermost -d \
+     --env 'DB_ADAPTER=postgres' --env 'DB_HOST=192.168.1.100' \
+     --env 'DB_NAME=mattermost' \
+     --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
+     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
+     jasl8r/mattermost:2.1.0
+```
+
+#### Linking to PostgreSQL Container
+
+You can link this image with a postgres container for the database requirements. The alias of the postgres server container should be set to **postgres** while linking with the mattermost image.
+
+If a postgres container is linked, only the `DB_ADAPTER`, `DB_HOST` and `DB_PORT` settings are automatically retrieved using the linkage. You may still need to set other database connection parameters such as the `DB_NAME`, `DB_USER`, `DB_PASS` and so on.
+
+To illustrate linking with a postgres container, we will use the [postgres](https://hub.docker.com/_/postgres/) image. When using postgres image in production you should mount a volume for the postgres data store. Please refer the [postgres](https://hub.docker.com/_/postgres/) documentation for details.
+
+First, lets pull the postgres image from the docker index.
+
+```bash
+docker pull postgres:latest
+```
+
+For data persistence lets create a store for the postgres and start the container.
+
+SELinux users are also required to change the security context of the mount point so that it plays nicely with selinux.
+
+```bash
+mkdir -p /srv/docker/mattermost/postgres
+sudo chcon -Rt svirt_sandbox_file_t /srv/docker/mattermost/postgres
+```
+
+The run command looks like this.
+
+```bash
+docker run --name mattermost-postgres -d \
+    --env 'POSTGRES_USER=mattermost' --env 'POSTGRES_PASSWORD=password' \
+    --volume /srv/docker/mattermost/postgres:/var/lib/postgresql \
+    postgresql:latest
+```
+
+The above command will create a database named `mattermost` and also create a user named `mattermost` with the password `password` with access to the `mattermost` database.
+
+We are now ready to start the Mattermost application.
+
+```bash
+docker run --name mattermost -d --link mattermost-postgres:postgres \
+     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
+     jasl8r/mattermost:2.1.0
+```
+
+Here the image will also automatically fetch the `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` variables from the postgres container as they are specified in the `docker run` command for the postgres container. This is made possible using the magic of docker links and works with the official [postgres](https://hub.docker.com/_/postgres/) image.
+
 ### Mail
 
 The mail configuration should be specified using environment variables while starting the Mattermost image.

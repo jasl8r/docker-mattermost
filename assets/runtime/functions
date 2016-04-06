@@ -109,8 +109,9 @@ install_configuration_templates() {
 }
 
 finalize_database_parameters() {
-  # is a mysql database linked?
-  # requires that the mysql container has exposed port 3306.
+  # is a mysql or postgresql database linked?
+  # requires that the mysql or postgresql containers have exposed
+  # port 3306 and 5432 respectively.
   if [[ -n ${MYSQL_PORT_3306_TCP_ADDR} ]]; then
     DB_ADAPTER=${DB_ADAPTER:-mysql}
     DB_HOST=${DB_HOST:-${MYSQL_PORT_3306_TCP_ADDR}}
@@ -118,6 +119,14 @@ finalize_database_parameters() {
     DB_USER=${DB_USER:-${MYSQL_ENV_MYSQL_USER}}
     DB_PASS=${DB_PASS:-${MYSQL_ENV_MYSQL_PASSWORD}}
     DB_NAME=${DB_NAME:-${MYSQL_ENV_MYSQL_DATABASE}}
+  elif [[ -n ${POSTGRES_PORT_5432_TCP_ADDR} ]]; then
+    DB_ADAPTER=${DB_ADAPTER:-postgres}
+    DB_HOST=${DB_HOST:-${POSTGRES_PORT_5432_TCP_ADDR}}
+    DB_PORT=${DB_PORT:-${POSTGRES_PORT_5432_TCP_PORT}}
+    DB_USER=${DB_USER:-${POSTGRES_ENV_POSTGRES_USER}}
+    DB_PASS=${DB_PASS:-${POSTGRES_ENV_POSTGRES_PASSWORD}}
+    DB_NAME=${DB_NAME:-${POSTGRES_ENV_POSTGRES_DB}}
+    DB_NAME=${DB_NAME:-${POSTGRES_ENV_POSTGRES_USER}}
   fi
 
   if [[ -z ${DB_HOST} ]]; then
@@ -135,12 +144,19 @@ finalize_database_parameters() {
     mysql)
       DB_ENCODING=${DB_ENCODING:-utf8}
       DB_PORT=${DB_PORT:-3306}
+      DB_PARAMS="charset=${DB_ENCODING}"
+      MATTERMOST_DATASOURCE="${DB_USER}:${DB_PASS}@tcp(${DB_HOST}:${DB_PORT})/${DB_NAME}?${DB_PARAMS}"
+      ;;
+    postgres)
+      DB_PORT=${DB_PORT:-5432}
+      DB_PARAMS="sslmode=disable&connect_timeout=10"
+      MATTERMOST_DATASOURCE="${DB_ADAPTER}://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?${DB_PARAMS}"
       ;;
     *)
       echo
       echo "ERROR: "
       echo "  Please specify the database type in use via the DB_ADAPTER configuration option."
-      echo "  Accepted value is \"mysql\". Aborting..."
+      echo "  Accepted values are \"postgres\" or \"mysql\". Aborting..."
       echo
       return 1
       ;;
@@ -155,6 +171,10 @@ check_database_connection() {
   case ${DB_ADAPTER} in
     mysql)
       prog="mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status"
+      ;;
+    postgresql)
+      prog=$(find /usr/lib/postgresql/ -name pg_isready)
+      prog="${prog} -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -t 1"
       ;;
   esac
   timeout=60
@@ -180,12 +200,7 @@ configure_database() {
 
   update_template ${MATTERMOST_CONFIG} \
     DB_ADAPTER \
-    DB_ENCODING \
-    DB_HOST \
-    DB_PORT \
-    DB_USER \
-    DB_PASS \
-    DB_NAME
+    MATTERMOST_DATASOURCE
 }
 
 configure_mattermost() {
