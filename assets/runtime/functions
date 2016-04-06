@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 source ${MATTERMOST_RUNTIME_DIR}/env-defaults
 
 SYSCONF_TEMPLATES_DIR="${MATTERMOST_RUNTIME_DIR}/config"
