@@ -8,8 +8,8 @@ mysql:
     - MYSQL_ROOT_PASSWORD=password
 
 mattermost:
-  build: .
   restart: always
+  image: jasl8r/mattermost:2.1.0
   links:
     - mysql:mysql
   ports:
