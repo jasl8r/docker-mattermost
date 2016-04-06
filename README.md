@@ -3,7 +3,7 @@
 # Docker Mattermost
 
 - [Introduction](#introduction)
-    - [Changelog](Changelog.md)
+    - [Changelog](CHANGELOG.md)
 - [Contributing](#contributing)
 - [Issues](#issues)
 - [Installation](#installation)
