@@ -6,6 +6,7 @@ for the list of changes in Mattermost.
 
 ## latest
 
+- remove embedded nginx server
 - add support for postgresql
 
 ## 2.1.0

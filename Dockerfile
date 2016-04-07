@@ -11,11 +11,9 @@ ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
     MATTERMOST_CONF_DIR="${MATTERMOST_HOME}/config" \
     MATTERMOST_LOG_DIR="/var/log/mattermost"
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 8B3981E7A6852F782CC4951600A6F0A3C300EE8C \
- && echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main" >> /etc/apt/sources.list \
- && apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y curl gettext-base nginx \
-    mysql-client supervisor locales \
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y curl gettext-base \
+    mysql-client locales \
  && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX \
  && locale-gen en_US.UTF-8 \
  && dpkg-reconfigure locales \
@@ -31,6 +29,6 @@ RUN chmod 755 /sbin/entrypoint.sh
 EXPOSE 80/tcp
 
 VOLUME ["${MATTERMOST_DATA_DIR}", "${MATTERMOST_LOG_DIR}"]
-WORKDIR ${MATTERMOST_HOME}
+WORKDIR ${MATTERMOST_INSTALL_DIR}
 ENTRYPOINT ["/sbin/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-nc", "/etc/supervisor/supervisord.conf"]
+CMD ["app:start"]

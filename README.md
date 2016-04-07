@@ -18,8 +18,6 @@
             - [External PostgreSQL Server](#external-postgresql-server)
             - [Linking to PostgreSQL Container](#linking-to-postgresql-container)
     - [Mail](#mail)
-    - [SSL](#ssl)
-        - [Using HTTPS with a load balancer](#using-https-with-a-load-balancer)
     - [GitLab Integration](#gitlab-integration)
     - [Available Configuration Parameters](#available-configuration-parameters)
 - [Maintenance](#maintenance)
@@ -308,30 +306,6 @@ docker run --name mattermost -d \
 
 Please refer the [Available Configuration Parameters](#available-configuration-parameters) section for the list of SMTP parameters that can be specified.
 
-### SSL
-
-Access to the Mattermost application can be secured using SSL so as to prevent unauthorized access to the data in your repositories.
-
-#### Using HTTPS with a load balancer
-
-Load balancers like nginx/haproxy/hipache talk to backend applications over plain http and as such the installation of ssl keys and certificates are not required and should **NOT** be installed in the container. The SSL configuration has to instead be done at the load balancer.
-
-However, when using a load balancer you **MUST** set `MATTERMOST_HTTPS` to `true`. 
-
-With this in place, you should configure the load balancer to support handling of https requests. But that is out of the scope of this document. Please refer to [Using SSL/HTTPS with HAProxy](http://seanmcgary.com/posts/using-sslhttps-with-haproxy) for information on the subject.
-
-When using a load balancer, you probably want to make sure the load balancer performs the automatic http to https redirection. Information on this can also be found in the link above.
-
-In summation, when using a load balancer, the docker command would look for the most part something like this:
-
-```bash
-docker run --name mattermost -d \
-    --publish 8080:80 --env 'MATTERMOST_HTTPS=true' \
-    --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.1.0
-```
-
-
 ### GitLab Integration
 
 Mattermost allows users to sign in using GitLab as an OAuth provider. Configuring GitLab does not prevent standard Mattermost authentication from continuing to work.  Users can choose to sign in using any of the configured mechanisms.
@@ -411,7 +385,6 @@ Below is the complete list of available options that can be used to customize yo
 - **GITLAB_AUTH_ENDPOINT**: GitLab API authentication endpoint. No defaults.
 - **GITLAB_TOKEN_ENDPOINT**: GitLab API token endpoint. No defaults.
 - **GITLAB_API_ENDPOINT**: GitLab API endpoint. No defaults.
-- **MATTERMOST_HTTPS**: Set to `true` to indicate that Mattermost is served over HTTPS. Defaults to `false`.
 
 # Maintenance
 

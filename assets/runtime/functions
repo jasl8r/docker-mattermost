@@ -5,7 +5,6 @@ source ${MATTERMOST_RUNTIME_DIR}/env-defaults
 SYSCONF_TEMPLATES_DIR="${MATTERMOST_RUNTIME_DIR}/config"
 
 MATTERMOST_CONFIG="${MATTERMOST_CONF_DIR}/config.json"
-NGINX_CONFIG="/etc/nginx/sites-enabled/mattermost"
 
 # Compares two version strings `a` and `b`
 # Returns
@@ -91,9 +90,6 @@ initialize_datadir() {
 initialize_logdir() {
   echo "Initializing logdir..."
   mkdir -p ${MATTERMOST_LOG_DIR}
-  mkdir -p ${MATTERMOST_LOG_DIR}/nginx
-  mkdir -p ${MATTERMOST_LOG_DIR}/supervisor
-  
   chmod -R 0755 ${MATTERMOST_LOG_DIR}
   chown -R root: ${MATTERMOST_LOG_DIR}
 }
@@ -104,7 +100,6 @@ install_configuration_templates() {
   mkdir -p ${MATTERMOST_CONF_DIR}
   
   install_template root: config.json ${MATTERMOST_CONFIG} 0640
-  install_template root: nginx/mattermost ${NGINX_CONFIG} 0640
 }
 
 finalize_database_parameters() {
@@ -283,17 +278,6 @@ configure_gitlab() {
   fi
 }
 
-configure_nginx() {
-  echo "Configuring nginx..."
-  update_template ${NGINX_CONFIG} \
-    MATTERMOST_HOME \
-    MATTERMOST_HOST \
-    MATTERMOST_PORT \
-    MATTERMOST_LOG_DIR \
-    MATTERMOST_INSTALL_DIR \
-    NGINX_X_FORWARDED_PROTO
-}
-
 initialize() {
   echo "Initializing mattermost..."
   check_version
@@ -308,5 +292,4 @@ configure() {
   configure_mattermost
   configure_smtp
   configure_gitlab
-  configure_nginx
 }

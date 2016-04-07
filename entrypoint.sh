@@ -4,7 +4,21 @@ source ${MATTERMOST_RUNTIME_DIR}/functions
 
 [[ $DEBUG == true ]] && set -x
 
-initialize
-configure
+case ${1} in
+  app:start)
+    initialize
+    configure
+    ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json
+    ;;
 
-exec "$@"
+  app:help)
+    echo "Available options:"
+    echo " app:start        - Starts the mattermost server (default)"
+    echo " app:help         - Displays the help"
+    echo " [command]        - Execute the specified command, eg. bash."
+    ;;
+
+  *)
+    exec "$@"
+    ;;
+esac
