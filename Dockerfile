@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM alpine:3.3
 MAINTAINER jasl8r@alum.wpi.edu
 
 ENV MATTERMOST_VERSION=2.1.0 \
@@ -11,13 +11,9 @@ ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
     MATTERMOST_CONF_DIR="${MATTERMOST_HOME}/config" \
     MATTERMOST_LOG_DIR="/var/log/mattermost"
 
-RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y curl gettext-base \
-    mysql-client locales \
- && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX \
- && locale-gen en_US.UTF-8 \
- && dpkg-reconfigure locales \
- && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add bash gettext sudo \
+    mysql-client postgresql-client \
+    ca-certificates
 
 COPY assets/build/ ${MATTERMOST_BUILD_DIR}/
 RUN bash ${MATTERMOST_BUILD_DIR}/install.sh

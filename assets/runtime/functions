@@ -164,15 +164,15 @@ finalize_database_parameters() {
 check_database_connection() {
   case ${DB_ADAPTER} in
     mysql)
-      prog="mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status"
+      prog=(mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status)
       ;;
-    postgresql)
-      prog=$(find /usr/lib/postgresql/ -name pg_isready)
-      prog="${prog} -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -t 1"
+    postgres)
+      export PGPASSWORD=${DB_PASS}
+      prog=(psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -t -c "select now()")
       ;;
   esac
   timeout=60
-  while ! ${prog} >/dev/null 2>&1
+  while ! "${prog[@]}" >/dev/null 2>&1
   do
     timeout=$(expr $timeout - 1)
     if [[ $timeout -eq 0 ]]; then
