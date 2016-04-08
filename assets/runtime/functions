@@ -274,7 +274,7 @@ configure_gitlab() {
       GITLAB_TOKEN_ENDPOINT \
       GITLAB_API_ENDPOINT
   else
-    perl -i -pe 'BEGIN{undef $/;} s/(,\s*)?"GitLabSettings".*?\s+}//smg' ${MATTERMOST_CONFIG}
+    sed -i "/GitLabSettings/,/UserApiEndpoint/d" ${MATTERMOST_CONFIG}
   fi
 }
 
