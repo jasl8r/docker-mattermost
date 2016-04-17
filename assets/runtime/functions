@@ -259,7 +259,7 @@ configure_smtp() {
       MATTERMOST_EMAIL \
       MATTERMOST_SUPPORT_EMAIL
   else
-    sed -i "/SendEmailNotifications/,/SMTPPort/d" ${MATTERMOST_CONFIG}
+    sed -i "/SendEmailNotifications/,/ConnectionSecurity/d" ${MATTERMOST_CONFIG}
   fi
 }
 
