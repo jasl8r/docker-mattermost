@@ -6,6 +6,8 @@ mysql:
     - MYSQL_PASSWORD=password
     - MYSQL_DATABASE=mattermost
     - MYSQL_ROOT_PASSWORD=password
+  volumes:
+    - /srv/docker/gitlab/mysql:/var/lib/mysql
 
 mattermost:
   restart: always
@@ -19,3 +21,5 @@ mattermost:
     - MATTERMOST_LINK_SALT=long-and-random-alphanumeric-string
     - MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string
     - MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string
+  volumes:
+    - /srv/docker/mattermost/mattermost:/opt/mattermost/data
