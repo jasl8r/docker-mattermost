@@ -15,7 +15,6 @@ mattermost:
   ports:
     - "80:80"
   environment:
-    - MATTERMOST_HOST=www.example.com
     - MATTERMOST_SECRET_KEY=long-and-random-alphanumeric-string
     - MATTERMOST_LINK_SALT=long-and-random-alphanumeric-string
     - MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string

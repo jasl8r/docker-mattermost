@@ -324,7 +324,6 @@ Below is the complete list of available options that can be used to customize yo
 
 - **DEBUG**: Set this to `true` to enable entrypoint debugging.
 - **MATTERMOST_NAME**: The name of the Mattermost server. Defaults to `Mattermost`.
-- **MATTERMOST_HOST**: The hostname of the Mattermost server. Defaults to `localhost`.
 - **MATTERMOST_ENABLE_EMAIL_SIGNUP**: Enable or disable user signup via email. Defaults to `true`.
 - **MATTERMOST_SECRET_KEY**: Used to encrypt sensitive fields in the database. Ensure that you don't lose it. You can generate one using `pwgen -Bsv1 64`. No defaults.
 - **MATTERMOST_RESET_SALT**: Salt used to sign password reset emails. No defaults.
