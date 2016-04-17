@@ -243,7 +243,8 @@ configure_mattermost() {
     MATTERMOST_RATE_LIMIT_BY_IP \
     MATTERMOST_RATE_LIMIT_HEADERS \
     MATTERMOST_SHOW_EMAIL \
-    MATTERMOST_SHOW_NAME
+    MATTERMOST_SHOW_NAME \
+    MATTERMOST_SUPPORT_EMAIL
 }
 
 configure_smtp() {
@@ -256,8 +257,7 @@ configure_smtp() {
       SMTP_PORT \
       SMTP_SECURITY \
       MATTERMOST_NAME \
-      MATTERMOST_EMAIL \
-      MATTERMOST_SUPPORT_EMAIL
+      MATTERMOST_EMAIL
   else
     sed -i "/SendEmailNotifications/,/ConnectionSecurity/d" ${MATTERMOST_CONFIG}
   fi
