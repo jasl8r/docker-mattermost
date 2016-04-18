@@ -18,6 +18,11 @@
             - [External PostgreSQL Server](#external-postgresql-server)
             - [Linking to PostgreSQL Container](#linking-to-postgresql-container)
     - [Mail](#mail)
+    - [SSL](#ssl)
+        - [Generation of Self Signed Certificates](#generation-of-self-signed-certificates)
+        - [Strengthening the Server Security](#strengthening-the-server-security)
+        - [Installation of the SSL Certificates](#installation-of-the-ssl-certificates)
+        - [Running Mattermost with HTTPS](#running-mattermost-with-https)
     - [GitLab Integration](#gitlab-integration)
     - [Available Configuration Parameters](#available-configuration-parameters)
 - [Maintenance](#maintenance)
@@ -305,6 +310,87 @@ docker run --name mattermost -d \
 ```
 
 Please refer the [Available Configuration Parameters](#available-configuration-parameters) section for the list of SMTP parameters that can be specified.
+
+### SSL
+
+The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document. 
+
+A docker compose file, `samples/nginx/docker-compose.yml` is included to run nginx as a proxy in front of mattermost. This configuration requires runtime data provided as docker volumes:
+
+- **Private key (.key)**
+- **SSL certificate (.crt)**
+- **DHE parameters**
+- **nginx site template**
+
+When using CA certified certificates, the private key and certificate are provided to you by the CA. When using self-signed certificates you need to generate these files yourself. Skip to [Strengthening the Server Security](#strengthening-the-server-security) section if you are armed with CA certified SSL certificates.
+
+#### Generation of Self Signed Certificates
+
+Generation of self-signed SSL certificates involves a simple 3 step procedure.
+
+**STEP 1**: Create the server private key
+
+```bash
+openssl genrsa -out mattermost.key 2048
+```
+
+**STEP 2**: Create the certificate signing request (CSR)
+
+```bash
+openssl req -new -key mattermost.key -out mattermost.csr
+```
+
+**STEP 3**: Sign the certificate using the private key and CSR
+
+```bash
+openssl x509 -req -days 3650 -in mattermost.csr -signkey mattermost.key -out mattermost.crt
+```
+
+Congratulations! you have now generated an SSL certificate that will be valid for 10 years.
+
+#### Strengthening the Server Security
+
+This section provides you with instructions to [strengthen your server security](https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html). To achieve this we need to generate stronger DHE parameters.
+
+```bash
+openssl dhparam -out dhparam.pem 2048
+```
+
+#### Installation of the SSL Certificates
+
+Out of the four files generated above, we need to install the `mattermost.key`, `mattermost.crt` and `dhparam.pem` files for the nginx server. The CSR file is not needed, but do make sure you safely backup the file (in case you ever need it again). The configuration template, `mattermost.template`, also needs to be provided to nginx.
+
+The default path that the nginx application is configured to look for the SSL certificates is at `/etc/nginx`. Following the conventions in this guide, the certificates and configuration can be provided as docker volumes by installing them in `/srv/docker/mattermost/nginx/`.
+
+```bash
+mkdir -p /srv/docker/mattermost/nginx
+cp mattermost.key /srv/docker/mattermost/nginx/
+cp mattermost.crt /srv/docker/mattermost/nginx/
+cp dhparam.pem /srv/docker/mattermost/nginx/
+chmod 400 /srv/docker/mattermost/nginx/mattermost.key
+```
+
+#### Running Mattermost with HTTPS
+
+Download the necessary docker-compose files.
+
+```bash
+wget https://raw.githubusercontent.com/jasl8r/docker-mattermost/master/samples/nginx/docker-compose.yml
+wget https://raw.githubusercontent.com/jasl8r/docker-mattermost/master/samples/nginx/mattermost.template
+mv mattermost.template /srv/docker/mattermost/nginx/
+```
+
+As in the [Quick Start](#quick-start) section, generate and assign random strings to the `MATTERMOST_SECRET_KEY`, `MATTERMOST_LINK_SALT`, `MATTERMOST_RESET_SALT` and `MATTERMOST_INVITE_SALT` environment variables. In addition, set the `NGINX_HOST` variable for the nginx service.
+
+In this configuration, any requests made over the plain HTTP protocol will automatically be redirected to use the HTTPS protocol. The default template file assumes that mattermost will be hosted on ports `80` and `443`. If you want to host on different ports and retain the functionality of the HTTP redirect, be sure to update the `mattermost.template` accordingly.
+
+Start Mattermost using:
+
+```bash
+docker-compose up
+```
+
+Point your browser to `https://localhost:8443` to access mattermost over a secure connection.
 
 ### GitLab Integration
 
