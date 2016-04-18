@@ -6,6 +6,7 @@ for the list of changes in Mattermost.
 
 ## latest
 
+- mattermost 2.2.0
 - change base image to alpine:3.3
 - remove embedded nginx server
 - add support for postgresql
