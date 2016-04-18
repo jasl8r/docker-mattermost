@@ -1,6 +1,6 @@
 {
     "ServiceSettings": {
-        "ListenAddress": ":8080",
+        "ListenAddress": ":80",
         "MaximumLoginAttempts": {{MATTERMOST_MAX_LOGIN_ATTEMPTS}},
         "SegmentDeveloperKey": "{{MATTERMOST_SEGMENT_KEY}}",
         "GoogleDeveloperKey": "{{MATTERMOST_GOOGLE_KEY}}",
@@ -19,8 +19,7 @@
         "SessionLengthWebInDays": {{MATTERMOST_WEB_SESSION_DAYS}},
         "SessionLengthMobileInDays": {{MATTERMOST_MOBILE_SESSION_DAYS}},
         "SessionLengthSSOInDays": {{MATTERMOST_SSO_SESSION_DAYS}},
-        "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}}
-    },
+        "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}} },
     "TeamSettings": {
         "SiteName": "{{MATTERMOST_NAME}}",
         "MaxUsersPerTeam": {{MATTERMOST_MAX_USERS}},
@@ -28,8 +27,7 @@
         "EnableUserCreation": {{MATTERMOST_CREATE_USERS}},
         "RestrictCreationToDomains": "{{MATTERMOST_USER_DOMAINS}}",
         "RestrictTeamNames": {{MATTERMOST_RESTRICT_TEAM_NAMES}},
-        "EnableTeamListing": {{MATTERMOST_TEAM_DIRECTORY}}
-    },
+        "EnableTeamListing": {{MATTERMOST_TEAM_DIRECTORY}} },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
         "DataSource": "{{MATTERMOST_DATASOURCE}}",
@@ -37,16 +35,14 @@
         "MaxIdleConns": 10,
         "MaxOpenConns": 10,
         "Trace": false,
-        "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}"
-    },
+        "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}" },
     "LogSettings": {
         "EnableConsole": false,
         "ConsoleLevel": "INFO",
         "EnableFile": true,
         "FileLevel": "INFO",
         "FileFormat": "",
-        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log"
-    },
+        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log" },
     "FileSettings": {
         "DriverName": "local",
         "Directory": "{{MATTERMOST_DATA_DIR}}",
@@ -66,8 +62,7 @@
         "AmazonS3Endpoint": "",
         "AmazonS3BucketEndpoint": "",
         "AmazonS3LocationConstraint": false,
-        "AmazonS3LowercaseBucket": false
-    },
+        "AmazonS3LowercaseBucket": false },
     "EmailSettings": {
         "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
         "SendEmailNotifications": {{MATTERMOST_EMAIL_NOTIFICATIONS}},
@@ -82,27 +77,23 @@
         "InviteSalt": "{{MATTERMOST_INVITE_SALT}}",
         "PasswordResetSalt": "{{MATTERMOST_RESET_SALT}}",
         "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},
-        "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}"
-    },
+        "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}" },
     "RateLimitSettings": {
         "EnableRateLimiter": {{MATTERMOST_ENABLE_RATE_LIMIT}},
         "PerSec": {{MATTERMOST_RATE_LIMIT_QPS}},
         "MemoryStoreSize": {{MATTERMOST_RATE_LIMIT_SESSIONS}},
         "VaryByRemoteAddr": {{MATTERMOST_RATE_LIMIT_BY_IP}},
-        "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}"
-    },
+        "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}" },
     "PrivacySettings": {
         "ShowEmailAddress": {{MATTERMOST_SHOW_EMAIL}},
-        "ShowFullName": {{MATTERMOST_SHOW_NAME}}
-    },
+        "ShowFullName": {{MATTERMOST_SHOW_NAME}} },
     "SupportSettings": {
         "TermsOfServiceLink": "/static/help/terms.html",
         "PrivacyPolicyLink": "/static/help/privacy.html",
         "AboutLink": "/static/help/about.html",
         "HelpLink": "/static/help/help.html",
         "ReportAProblemLink": "/static/help/report_problem.html",
-        "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}"
-    },
+        "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}" },
     "GitLabSettings": {
         "Enable": true,
         "Secret": "{{GITLAB_SECRET}}",
@@ -110,6 +101,6 @@
         "Scope": "{{GITLAB_SCOPE}}",
         "AuthEndpoint": "{{GITLAB_AUTH_ENDPOINT}}",
         "TokenEndpoint": "{{GITLAB_TOKEN_ENDPOINT}}",
-        "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}"
-    }
+        "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}" },
+    "_": {}
 }

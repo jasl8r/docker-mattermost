@@ -5,7 +5,6 @@ source ${MATTERMOST_RUNTIME_DIR}/env-defaults
 SYSCONF_TEMPLATES_DIR="${MATTERMOST_RUNTIME_DIR}/config"
 
 MATTERMOST_CONFIG="${MATTERMOST_CONF_DIR}/config.json"
-NGINX_CONFIG="/etc/nginx/sites-enabled/mattermost"
 
 # Compares two version strings `a` and `b`
 # Returns
@@ -91,9 +90,6 @@ initialize_datadir() {
 initialize_logdir() {
   echo "Initializing logdir..."
   mkdir -p ${MATTERMOST_LOG_DIR}
-  mkdir -p ${MATTERMOST_LOG_DIR}/nginx
-  mkdir -p ${MATTERMOST_LOG_DIR}/supervisor
-  
   chmod -R 0755 ${MATTERMOST_LOG_DIR}
   chown -R root: ${MATTERMOST_LOG_DIR}
 }
@@ -104,7 +100,6 @@ install_configuration_templates() {
   mkdir -p ${MATTERMOST_CONF_DIR}
   
   install_template root: config.json ${MATTERMOST_CONFIG} 0640
-  install_template root: nginx/mattermost ${NGINX_CONFIG} 0640
 }
 
 finalize_database_parameters() {
@@ -169,15 +164,15 @@ finalize_database_parameters() {
 check_database_connection() {
   case ${DB_ADAPTER} in
     mysql)
-      prog="mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status"
+      prog=(mysqladmin -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} status)
       ;;
-    postgresql)
-      prog=$(find /usr/lib/postgresql/ -name pg_isready)
-      prog="${prog} -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -t 1"
+    postgres)
+      export PGPASSWORD=${DB_PASS}
+      prog=(psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -t -c "select now()")
       ;;
   esac
   timeout=60
-  while ! ${prog} >/dev/null 2>&1
+  while ! "${prog[@]}" >/dev/null 2>&1
   do
     timeout=$(expr $timeout - 1)
     if [[ $timeout -eq 0 ]]; then
@@ -248,7 +243,8 @@ configure_mattermost() {
     MATTERMOST_RATE_LIMIT_BY_IP \
     MATTERMOST_RATE_LIMIT_HEADERS \
     MATTERMOST_SHOW_EMAIL \
-    MATTERMOST_SHOW_NAME
+    MATTERMOST_SHOW_NAME \
+    MATTERMOST_SUPPORT_EMAIL
 }
 
 configure_smtp() {
@@ -261,10 +257,9 @@ configure_smtp() {
       SMTP_PORT \
       SMTP_SECURITY \
       MATTERMOST_NAME \
-      MATTERMOST_EMAIL \
-      MATTERMOST_SUPPORT_EMAIL
+      MATTERMOST_EMAIL
   else
-    sed -i "/SendEmailNotifications/,/SMTPPort/d" ${MATTERMOST_CONFIG}
+    sed -i "/SendEmailNotifications/,/ConnectionSecurity/d" ${MATTERMOST_CONFIG}
   fi
 }
 
@@ -279,19 +274,8 @@ configure_gitlab() {
       GITLAB_TOKEN_ENDPOINT \
       GITLAB_API_ENDPOINT
   else
-    perl -i -pe 'BEGIN{undef $/;} s/(,\s*)?"GitLabSettings".*?\s+}//smg' ${MATTERMOST_CONFIG}
+    sed -i "/GitLabSettings/,/UserApiEndpoint/d" ${MATTERMOST_CONFIG}
   fi
-}
-
-configure_nginx() {
-  echo "Configuring nginx..."
-  update_template ${NGINX_CONFIG} \
-    MATTERMOST_HOME \
-    MATTERMOST_HOST \
-    MATTERMOST_PORT \
-    MATTERMOST_LOG_DIR \
-    MATTERMOST_INSTALL_DIR \
-    NGINX_X_FORWARDED_PROTO
 }
 
 initialize() {
@@ -308,5 +292,4 @@ configure() {
   configure_mattermost
   configure_smtp
   configure_gitlab
-  configure_nginx
 }

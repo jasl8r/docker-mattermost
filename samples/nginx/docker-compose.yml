@@ -1,0 +1,43 @@
+mysql:
+  restart: always
+  image: mysql:latest
+  environment:
+    - MYSQL_USER=mattermost
+    - MYSQL_PASSWORD=password
+    - MYSQL_DATABASE=mattermost
+    - MYSQL_ROOT_PASSWORD=password
+  volumes:
+    - /srv/docker/gitlab/mysql:/var/lib/mysql
+
+mattermost:
+  restart: always
+  image: jasl8r/mattermost:2.1.0-alpine
+  links:
+    - mysql:mysql
+  environment:
+    - MATTERMOST_SECRET_KEY=long-and-random-alphanumeric-string
+    - MATTERMOST_LINK_SALT=long-and-random-alphanumeric-string
+    - MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string
+    - MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string
+  volumes:
+    - /srv/docker/mattermost/mattermost:/opt/mattermost/data
+
+nginx:
+  restart: always
+  image: nginx:stable-alpine
+  links:
+    - mattermost:mattermost
+  ports:
+   - "8080:80"
+   - "8443:443"
+  environment:
+    - NGINX_HOST=www.example.com
+  volumes:
+    - /srv/docker/mattermost/nginx/mattermost.template:/etc/nginx/conf.d/mattermost.template
+    - /srv/docker/mattermost/nginx/mattermost.crt:/etc/nginx/mattermost.crt
+    - /srv/docker/mattermost/nginx/mattermost.key:/etc/nginx/mattermost.key
+    - /srv/docker/mattermost/nginx/dhparam.pem:/etc/nginx/dhparam.pem
+  command: /bin/sh -c "envsubst '$$MATTERMOST_PORT_80_TCP_ADDR:$$NGINX_HOST'
+                       < /etc/nginx/conf.d/mattermost.template 
+                       > /etc/nginx/conf.d/default.conf 
+                       && nginx -g 'daemon off;'"

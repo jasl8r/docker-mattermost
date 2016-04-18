@@ -1,46 +1,46 @@
 #!/bin/bash
 set -e
-set -x
 
+MATTERMOST_CLONE_URL=https://github.com/mattermost/platform.git
+
+export GOPATH=/opt/go
+MATTERMOST_BUILD_PATH=${GOPATH}/src/github.com/mattermost
+
+# install build dependencies
+apk --no-cache add --virtual build-dependencies \
+  alpine-sdk git go godep libffi libffi-dev nodejs ruby ruby-dev
+
+gem install compass || true
+
+# create build directories
+mkdir -p ${GOPATH}
+mkdir -p ${MATTERMOST_BUILD_PATH}
+cd ${MATTERMOST_BUILD_PATH}
+
+# install mattermost
+echo "Cloning Mattermost ${MATTERMOST_VERSION}..."
+git clone -q -b v${MATTERMOST_VERSION} --depth 1 ${MATTERMOST_CLONE_URL}
+
+echo "Building Mattermost..."
+cd platform
+make .prepare-go
+make build-server
+
+cd web/react
+npm install babel-runtime
+cd -
+make build-client
+make package
+
+echo "Installing Mattermost..."
 mkdir -p ${MATTERMOST_HOME}
 cd ${MATTERMOST_HOME}
+tar -xvzf ${MATTERMOST_BUILD_PATH}/platform/dist/mattermost.tar.gz
 
-echo "Downloading Mattermost v.${MATTERMOST_VERSION}"
-curl -OL https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
-tar xzf mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
-rm mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
-
-# disable default nginx configuration and enable mattermost's nginx configuration
-rm -rf /etc/nginx/sites-enabled/default
-
-# move nginx logs to ${MATTERMOST_LOG_DIR}/nginx
-sed -i \
-  -e "s|access_log /var/log/nginx/access.log;|access_log ${MATTERMOST_LOG_DIR}/nginx/access.log;|" \
-  -e "s|error_log /var/log/nginx/error.log;|error_log ${MATTERMOST_LOG_DIR}/nginx/error.log;|" \
-  /etc/nginx/nginx.conf
-
-#configure supervisord to start mattermost
-cat > /etc/supervisor/conf.d/mattermost.conf <<EOF
-[program:mattermost]
-priority=10
-directory=${MATTERMOST_INSTALL_DIR}
-command=${MATTERMOST_INSTALL_DIR}/bin/platform -config ${MATTERMOST_CONF_DIR}/config.json
-autostart=true
-autorestart=true
-stopsignal=QUIT
-stdout_logfile=${MATTERMOST_LOG_DIR}/supervisor/%(program_name)s.log
-stderr_logfile=${MATTERMOST_LOG_DIR}/supervisor/%(program_name)s.log
-EOF
-
-# configure supervisord to start nginx
-cat > /etc/supervisor/conf.d/nginx.conf <<EOF
-[program:nginx]
-priority=20
-directory=/tmp
-command=/usr/sbin/nginx -g "daemon off;"
-user=root
-autostart=true
-autorestart=true
-stdout_logfile=${MATTERMOST_LOG_DIR}/supervisor/%(program_name)s.log
-stderr_logfile=${MATTERMOST_LOG_DIR}/supervisor/%(program_name)s.log
-EOF
+# cleanup build dependencies, caches and artifacts
+apk del build-dependencies
+rm -rf ${GOPATH}
+rm -rf /tmp/npm*
+rm -rf /root/.gem
+rm -rf /root/.npm
+rm -rf /usr/lib/ruby

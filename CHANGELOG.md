@@ -6,7 +6,10 @@ for the list of changes in Mattermost.
 
 ## latest
 
+- change base image to alpine:3.3
+- remove embedded nginx server
 - add support for postgresql
+- add nginx container sample
 
 ## 2.1.0
 
