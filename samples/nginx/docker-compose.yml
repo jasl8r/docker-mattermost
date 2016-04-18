@@ -11,7 +11,7 @@ mysql:
 
 mattermost:
   restart: always
-  image: jasl8r/mattermost:2.1.0-alpine
+  image: jasl8r/mattermost:2.2.0
   links:
     - mysql:mysql
   environment:
