@@ -27,6 +27,7 @@
     - [Available Configuration Parameters](#available-configuration-parameters)
 - [Maintenance](#maintenance)
     - [Upgrading](#upgrading)
+        - [Upgrading to Version 3](#upgrading-to-version-3)
     - [Shell Access](#shell-access)
 - [References](#references)
 
@@ -52,7 +53,7 @@ Automated builds of the image are available on [Dockerhub](https://hub.docker.co
 > **Note**: Builds are also available on [Quay.io](https://quay.io/repository/jasl8r/mattermost)
 
 ```bash
-docker pull jasl8r/mattermost:2.2.0
+docker pull jasl8r/mattermost:3.0.2
 ```
 
 You can also pull the `latest` tag which is built from the repository *HEAD*
@@ -108,7 +109,7 @@ docker run --name mattermost -d \
     --env 'MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string' \
     --env 'MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.2.0
+    jasl8r/mattermost:3.0.2
 ```
 
 *Please refer to [Available Configuration Parameters](#available-configuration-parameters) to understand `MATTERMOST_PORT` and other configuration options*
@@ -141,7 +142,7 @@ Volumes can be mounted in docker by specifying the `-v` option in the docker run
 ```bash
 docker run --name mattermost -d \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.2.0
+    jasl8r/mattermost:3.0.2
 ```
 
 ## Database
@@ -172,7 +173,7 @@ docker run --name mattermost -d \
     --env 'DB_NAME=mattermost' \
     --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.2.0
+    jasl8r/mattermost:3.0.2
 ```
 
 #### Linking to MySQL Container
@@ -215,7 +216,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-mysql:mysql \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.2.0
+    jasl8r/mattermost:3.0.2
 ```
 
 Here the image will also automatically fetch the `MYSQL_DATABASE`, `MYSQL_USER` and `MYSQL_PASSWORD` variables from the mysql container as they are specified in the `docker run` command for the mysql container. This is made possible using the magic of docker links and works with the following images:
@@ -247,7 +248,7 @@ docker run --name mattermost -d \
      --env 'DB_NAME=mattermost' \
      --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:2.2.0
+     jasl8r/mattermost:3.0.2
 ```
 
 #### Linking to PostgreSQL Container
@@ -289,7 +290,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-postgres:postgres \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:2.2.0
+     jasl8r/mattermost:3.0.2
 ```
 
 Here the image will also automatically fetch the `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` variables from the postgres container as they are specified in the `docker run` command for the postgres container. This is made possible using the magic of docker links and works with the official [postgres](https://hub.docker.com/_/postgres/) image.
@@ -306,7 +307,7 @@ docker run --name mattermost -d \
     --env 'SMTP_DOMAIN=www.gmail.com' \
     --env 'SMTP_HOST=smtp.gmail.com' --env 'SMTP_PORT=587' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:2.2.0
+    jasl8r/mattermost:3.0.2
 ```
 
 Please refer the [Available Configuration Parameters](#available-configuration-parameters) section for the list of SMTP parameters that can be specified.
@@ -433,13 +434,14 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_MAX_USERS**: Maximum number of users allowed per team. Defaults to `50`.
 - **MATTERMOST_CREATE_TEAMS**: Allow users to create teams. Defaults to `true`.
 - **MATTERMOST_CREATE_USERS**: Allow user signup. Defaults to `true`.
+- **MATTERMOST_OPEN_SERVER**: Allow users to create accounts without being invited. Defaults to `false`.
 - **MATTERMOST_USER_DOMAINS**: Restrict user signup to emails belonging to the list of domains. No defaults.
 - **MATTERMOST_RESTRICT_TEAM_NAMES**: Restrict the names for new teams. Defaults to `true`.
-- **MATTERMOST_TEAM_DIRECTORY**: Enable to show teams on the main page for teams that opt-in to be listed. Defaults to `false`.
 - **MATTERMOST_EMAIL_SIGNIN**: Allow users to sign in with their email. Defaults to `true`.
 - **MATTERMOST_USERNAME_SIGNIN**: Allow users to sign in with their username. Defaults to `false`.
 - **MATTERMOST_PUSH_SERVER**: Location of the Mattermost Push Notification Service (MPNS). No defaults.
 - **MATTERMOST_ENABLE_PUSH_NOTIFICATIONS**: Enable to send push notifications. Defaults to `true` if `MATTERMOST_PUSH_SERVER` is set.
+- **MATTERMOST_PUSH_FULL_MESSAGE**: Enable to send full message for push notifications. Otherwise only the names and channels will be sent. Defaults to `false`.
 - **MATTERMOST_LINK_SALT**: Salt used to sign public image links. No defaults.
 - **MATTERMOST_ENABLE_PUBLIC_LINKS**: Enable to allow public image links. Defaults to `true` if `MATTERMOST_LINK_SALT` is set.
 - **MATTERMOST_ENABLE_RATE_LIMIT**: Throttle API access according to `MATTERMOST_RATE_LIMIT_QPS`, `MATTERMOST_RATE_LIMIT_SESSIONS`, `MATTERMOST_RATE_LIMIT_BY_IP` and `MATTERMOST_RATE_LIMIT_HEADERS`. Defaults to `true`.
@@ -470,6 +472,7 @@ Below is the complete list of available options that can be used to customize yo
 - **GITLAB_AUTH_ENDPOINT**: GitLab API authentication endpoint. No defaults.
 - **GITLAB_TOKEN_ENDPOINT**: GitLab API token endpoint. No defaults.
 - **GITLAB_API_ENDPOINT**: GitLab API endpoint. No defaults.
+- **MATTERMOST_MIGRATION_DEFAULT_TEAM**: The default team to use during the Mattermost version 3 migration. No defaults.
 
 # Maintenance
 
@@ -482,7 +485,7 @@ To upgrade to newer Mattermost releases, simply follow this 4 step upgrade proce
 - **Step 1**: Update the docker image.
 
 ```bash
-docker pull jasl8r/mattermost:2.2.0
+docker pull jasl8r/mattermost:3.0.2
 ```
 
 - **Step 2**: Stop and remove the currently running image
@@ -499,7 +502,28 @@ Backup your database and local file storage by your preferred backup method.  Al
 - **Step 4**: Start the image
 
 ```bash
-docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:2.2.0
+docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.0.2
+```
+
+### Upgrading to Version 3
+
+With Mattermost version 3.0.0, the database must be destructively migrated to support the new global user model.  This upgrade may be performed automatically or interactively using the built-in Mattermost upgrade mechanism.  Due to the destructive and pervasive nature of this upgrade, it is imperative that you perform a backup of the database before upgrading.
+
+In order to automatically upgrade the database, simply add the `MATTERMOST_MIGRATION_DEFAULT_TEAM` environment variable with the name of primary team used during the migration.
+
+```bash
+docker run --name mattermost -d --link mattermost-postgres:postgres \
+     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
+     --env 'MATTERMOST_MIGRATION_DEFAULT_TEAM=myteam' \
+     jasl8r/mattermost:3.0.2
+```
+
+Manually perform the migration by running the `app:migrate` command and follow the interactive prompt.
+
+```bash
+docker run -it --name mattermost -d --link mattermost-postgres:postgres \
+     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
+     jasl8r/mattermost:3.0.2 app:migrate
 ```
 
 ## Shell Access

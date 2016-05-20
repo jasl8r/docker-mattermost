@@ -64,24 +64,6 @@ update_template() {
   rm -f ${tmp_file}
 }
 
-check_version() {
-  # check if the mattermost version has changed.
-  CACHE_VERSION=
-  [[ -f ${MATTERMOST_DATA_DIR}/VERSION ]] && CACHE_VERSION=$(cat ${MATTERMOST_DATA_DIR}/VERSION)
-  if [[ ${MATTERMOST_VERSION} != ${CACHE_VERSION} ]]; then
-    if [[ -n ${CACHE_VERSION} && $(vercmp ${MATTERMOST_VERSION} ${CACHE_VERSION}) -lt 0 ]]; then
-      echo
-      echo "ERROR: "
-      echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
-      echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
-      echo "  Cannot continue. Aborting!"
-      echo
-      return 1
-    fi
-  fi
-  echo "${GITLAB_VERSION}" > ${GITLAB_TEMP_DIR}/VERSION
-}
-
 initialize_datadir() {
   echo "Initializing datadir..."
   chmod 755 ${MATTERMOST_DATA_DIR}
@@ -228,13 +210,14 @@ configure_mattermost() {
     MATTERMOST_CREATE_USERS \
     MATTERMOST_USER_DOMAINS \
     MATTERMOST_RESTRICT_TEAM_NAMES \
-    MATTERMOST_TEAM_DIRECTORY \
+    MATTERMOST_OPEN_SERVER \
     MATTERMOST_EMAIL_SIGNIN \
     MATTERMOST_USERNAME_SIGNIN \
     MATTERMOST_EMAIL_NOTIFICATIONS \
     MATTERMOST_EMAIL_VERIFICATION \
     MATTERMOST_ENABLE_PUSH_NOTIFICATIONS \
     MATTERMOST_PUSH_SERVER \
+    MATTERMOST_PUSH_CONTENTS \
     MATTERMOST_ENABLE_PUBLIC_LINKS \
     MATTERMOST_LINK_SALT \
     MATTERMOST_ENABLE_RATE_LIMIT \
@@ -278,9 +261,49 @@ configure_gitlab() {
   fi
 }
 
+migrate_version() {
+  CACHE_VERSION=$1
+
+  if [[ $(vercmp ${MATTERMOST_VERSION} ${CACHE_VERSION}) -lt 0 ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+    echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
+    echo "  Cannot continue. Aborting!"
+    echo
+    return 1
+  fi
+
+  # Handle version 3 migration
+  if [[ $(vercmp ${MATTERMOST_VERSION} 3.0.0) -ge 0 &&
+        $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
+    echo "Migrating database to version 3.0"
+    if [[ $INTERACTIVE -eq 1 ]]; then
+      ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json -upgrade_db_30
+    elif [[ -n ${MATTERMOST_MIGRATION_DEFAULT_TEAM} ]]; then
+      rm -f /tmp/fifo
+      mkfifo /tmp/fifo
+      exec 3<> /tmp/fifo
+      echo YES > /tmp/fifo
+      echo ${MATTERMOST_MIGRATION_DEFAULT_TEAM} > /tmp/fifo
+      ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json -upgrade_db_30 < /tmp/fifo
+      rm /tmp/fifo
+    else
+      echo
+      echo "ERROR: "
+      echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+      echo "  Mattermost version 3.0.0 introduced a major user model change that requires"
+      echo "  defining a default team.  You may interactively run this upgrade by running"
+      echo "  the app:upgrade task or you may automatically perform the upgrade by specifying"
+      echo "  your default team in the MATTERMOST_MIGRATION_DEFAULT_TEAM environment variable."
+      echo
+      return 1
+    fi
+  fi
+}
+
 initialize() {
   echo "Initializing mattermost..."
-  check_version
   initialize_datadir
   initialize_logdir
   install_configuration_templates
@@ -292,4 +315,34 @@ configure() {
   configure_mattermost
   configure_smtp
   configure_gitlab
+}
+
+migrate() {
+  INTERACTIVE=$([[ ${1} = "-interactive" ]] && echo 1 || echo 0)
+
+  # check if this is a new installation
+  case ${DB_ADAPTER} in
+    mysql)
+      QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = '${DB_NAME}';"
+      COUNT=$(mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} -ss -e "${QUERY}")
+      ;;
+    postgres)
+      QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';"
+      COUNT=$(PGPASSWORD="${DB_PASS}" psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -Atw -c "${QUERY}")
+      ;;
+  esac
+
+  if [[ -z ${COUNT} || ${COUNT} -eq 0 ]]; then
+    echo "Configuring new Mattermost installation..."
+  else
+    # check if the mattermost version has changed.
+    [[ -f ${MATTERMOST_DATA_DIR}/VERSION ]] && CACHE_VERSION=$(cat ${MATTERMOST_DATA_DIR}/VERSION)
+    CACHE_VERSION=${CACHE_VERSION:-2.0.0}
+
+    if [[ ${MATTERMOST_VERSION} != ${CACHE_VERSION} ]]; then
+      migrate_version $CACHE_VERSION
+    fi
+  fi
+
+  echo "${MATTERMOST_VERSION}" > ${MATTERMOST_DATA_DIR}/VERSION
 }
