@@ -433,13 +433,14 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_MAX_USERS**: Maximum number of users allowed per team. Defaults to `50`.
 - **MATTERMOST_CREATE_TEAMS**: Allow users to create teams. Defaults to `true`.
 - **MATTERMOST_CREATE_USERS**: Allow user signup. Defaults to `true`.
+- **MATTERMOST_OPEN_SERVER**: Allow users to create accounts without being invited. Defaults to `false`.
 - **MATTERMOST_USER_DOMAINS**: Restrict user signup to emails belonging to the list of domains. No defaults.
 - **MATTERMOST_RESTRICT_TEAM_NAMES**: Restrict the names for new teams. Defaults to `true`.
-- **MATTERMOST_TEAM_DIRECTORY**: Enable to show teams on the main page for teams that opt-in to be listed. Defaults to `false`.
 - **MATTERMOST_EMAIL_SIGNIN**: Allow users to sign in with their email. Defaults to `true`.
 - **MATTERMOST_USERNAME_SIGNIN**: Allow users to sign in with their username. Defaults to `false`.
 - **MATTERMOST_PUSH_SERVER**: Location of the Mattermost Push Notification Service (MPNS). No defaults.
 - **MATTERMOST_ENABLE_PUSH_NOTIFICATIONS**: Enable to send push notifications. Defaults to `true` if `MATTERMOST_PUSH_SERVER` is set.
+- **MATTERMOST_PUSH_FULL_MESSAGE**: Enable to send full message for push notifications. Otherwise only the names and channels will be sent. Defaults to `false`.
 - **MATTERMOST_LINK_SALT**: Salt used to sign public image links. No defaults.
 - **MATTERMOST_ENABLE_PUBLIC_LINKS**: Enable to allow public image links. Defaults to `true` if `MATTERMOST_LINK_SALT` is set.
 - **MATTERMOST_ENABLE_RATE_LIMIT**: Throttle API access according to `MATTERMOST_RATE_LIMIT_QPS`, `MATTERMOST_RATE_LIMIT_SESSIONS`, `MATTERMOST_RATE_LIMIT_BY_IP` and `MATTERMOST_RATE_LIMIT_HEADERS`. Defaults to `true`.

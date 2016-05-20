@@ -27,7 +27,7 @@
         "EnableUserCreation": {{MATTERMOST_CREATE_USERS}},
         "RestrictCreationToDomains": "{{MATTERMOST_USER_DOMAINS}}",
         "RestrictTeamNames": {{MATTERMOST_RESTRICT_TEAM_NAMES}},
-        "EnableTeamListing": {{MATTERMOST_TEAM_DIRECTORY}} },
+        "EnableOpenServer": {{MATTERMOST_OPEN_SERVER}} },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
         "DataSource": "{{MATTERMOST_DATASOURCE}}",
@@ -65,6 +65,8 @@
         "AmazonS3LowercaseBucket": false },
     "EmailSettings": {
         "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
+        "EnableSignInWithEmail": {{MATTERMOST_EMAIL_SIGNIN}},
+        "EnableSignInWithUsername": {{MATTERMOST_USERNAME_SIGNIN}},
         "SendEmailNotifications": {{MATTERMOST_EMAIL_NOTIFICATIONS}},
         "RequireEmailVerification": {{MATTERMOST_EMAIL_VERIFICATION}},
         "FeedbackName": "{{MATTERMOST_NAME}}",
@@ -77,7 +79,8 @@
         "InviteSalt": "{{MATTERMOST_INVITE_SALT}}",
         "PasswordResetSalt": "{{MATTERMOST_RESET_SALT}}",
         "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},
-        "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}" },
+        "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}",
+        "PushNotificationContents": "{{MATTERMOST_PUSH_CONTENTS}}" },
     "RateLimitSettings": {
         "EnableRateLimiter": {{MATTERMOST_ENABLE_RATE_LIMIT}},
         "PerSec": {{MATTERMOST_RATE_LIMIT_QPS}},
