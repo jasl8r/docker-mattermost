@@ -8,9 +8,10 @@ MATTERMOST_BUILD_PATH=${GOPATH}/src/github.com/mattermost
 
 # install build dependencies
 apk --no-cache add --virtual build-dependencies \
-  alpine-sdk git go godep libffi libffi-dev nodejs ruby ruby-dev
+  go git mercurial nodejs make g++
 
-gem install compass || true
+go get github.com/tools/godep
+npm update npm --global
 
 # create build directories
 mkdir -p ${GOPATH}
@@ -23,24 +24,18 @@ git clone -q -b v${MATTERMOST_VERSION} --depth 1 ${MATTERMOST_CLONE_URL}
 
 echo "Building Mattermost..."
 cd platform
-make .prepare-go
-make build-server
-
-cd web/react
-npm install babel-runtime
-cd -
-make build-client
-make package
+sed -i.org 's/sudo //g' Makefile
+make package BUILD_NUMBER=${MATTERMOST_VERSION}
 
 echo "Installing Mattermost..."
-mkdir -p ${MATTERMOST_HOME}
 cd ${MATTERMOST_HOME}
-tar -xvzf ${MATTERMOST_BUILD_PATH}/platform/dist/mattermost.tar.gz
+tar -xvzf ${MATTERMOST_BUILD_PATH}/platform/dist/mattermost-team-linux-amd64.tar.gz
 
 # cleanup build dependencies, caches and artifacts
 apk del build-dependencies
 rm -rf ${GOPATH}
 rm -rf /tmp/npm*
-rm -rf /root/.gem
 rm -rf /root/.npm
-rm -rf /usr/lib/ruby
+rm -rf /root/.node-gyp
+rm -rf /usr/lib/go/pkg
+rm -rf /usr/lib/node_modules
