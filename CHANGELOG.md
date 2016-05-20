@@ -11,6 +11,7 @@ for the list of changes in Mattermost.
 - remove `MATTERMOST_TEAM_DIRECTORY`
 - add `MATTERMOST_OPEN_SERVER` to enable user creation without an invite
 - add `MATTERMOST_PUSH_FULL_MESSAGE` to configure push notification content
+- use `MATTERMOST_EMAIL_SIGNIN` and `MATTERMOST_USERNAME_SIGNIN` variables
 
 ## 2.2.0
 
