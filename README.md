@@ -53,7 +53,7 @@ Automated builds of the image are available on [Dockerhub](https://hub.docker.co
 > **Note**: Builds are also available on [Quay.io](https://quay.io/repository/jasl8r/mattermost)
 
 ```bash
-docker pull jasl8r/mattermost:3.0.2
+docker pull jasl8r/mattermost:3.1.0
 ```
 
 You can also pull the `latest` tag which is built from the repository *HEAD*
@@ -109,7 +109,7 @@ docker run --name mattermost -d \
     --env 'MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string' \
     --env 'MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.0.2
+    jasl8r/mattermost:3.1.0
 ```
 
 *Please refer to [Available Configuration Parameters](#available-configuration-parameters) to understand `MATTERMOST_PORT` and other configuration options*
@@ -142,7 +142,7 @@ Volumes can be mounted in docker by specifying the `-v` option in the docker run
 ```bash
 docker run --name mattermost -d \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.0.2
+    jasl8r/mattermost:3.1.0
 ```
 
 ## Database
@@ -173,7 +173,7 @@ docker run --name mattermost -d \
     --env 'DB_NAME=mattermost' \
     --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.0.2
+    jasl8r/mattermost:3.1.0
 ```
 
 #### Linking to MySQL Container
@@ -216,7 +216,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-mysql:mysql \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.0.2
+    jasl8r/mattermost:3.1.0
 ```
 
 Here the image will also automatically fetch the `MYSQL_DATABASE`, `MYSQL_USER` and `MYSQL_PASSWORD` variables from the mysql container as they are specified in the `docker run` command for the mysql container. This is made possible using the magic of docker links and works with the following images:
@@ -248,7 +248,7 @@ docker run --name mattermost -d \
      --env 'DB_NAME=mattermost' \
      --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.0.2
+     jasl8r/mattermost:3.1.0
 ```
 
 #### Linking to PostgreSQL Container
@@ -290,7 +290,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-postgres:postgres \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.0.2
+     jasl8r/mattermost:3.1.0
 ```
 
 Here the image will also automatically fetch the `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` variables from the postgres container as they are specified in the `docker run` command for the postgres container. This is made possible using the magic of docker links and works with the official [postgres](https://hub.docker.com/_/postgres/) image.
@@ -307,7 +307,7 @@ docker run --name mattermost -d \
     --env 'SMTP_DOMAIN=www.gmail.com' \
     --env 'SMTP_HOST=smtp.gmail.com' --env 'SMTP_PORT=587' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.0.2
+    jasl8r/mattermost:3.1.0
 ```
 
 Please refer the [Available Configuration Parameters](#available-configuration-parameters) section for the list of SMTP parameters that can be specified.
@@ -442,6 +442,7 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_PUSH_SERVER**: Location of the Mattermost Push Notification Service (MPNS). No defaults.
 - **MATTERMOST_ENABLE_PUSH_NOTIFICATIONS**: Enable to send push notifications. Defaults to `true` if `MATTERMOST_PUSH_SERVER` is set.
 - **MATTERMOST_PUSH_FULL_MESSAGE**: Enable to send full message for push notifications. Otherwise only the names and channels will be sent. Defaults to `false`.
+- **MATTERMOST_MAX_FILE_SIZE**: Maximum file size for uploads. Defaults to `52428800`.
 - **MATTERMOST_LINK_SALT**: Salt used to sign public image links. No defaults.
 - **MATTERMOST_ENABLE_PUBLIC_LINKS**: Enable to allow public image links. Defaults to `true` if `MATTERMOST_LINK_SALT` is set.
 - **MATTERMOST_ENABLE_RATE_LIMIT**: Throttle API access according to `MATTERMOST_RATE_LIMIT_QPS`, `MATTERMOST_RATE_LIMIT_SESSIONS`, `MATTERMOST_RATE_LIMIT_BY_IP` and `MATTERMOST_RATE_LIMIT_HEADERS`. Defaults to `true`.
@@ -451,6 +452,9 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_RATE_LIMIT_HEADERS**: Enforce rate limit by the provided HTTP headers. No defaults.
 - **MATTERMOST_SHOW_EMAIL**: Show user email addresses. Defaults to `true`.
 - **MATTERMOST_SHOW_NAME**: Show full name of users. Defaults to `true`.
+- **MATTERMOST_SERVER_LOCALE**: Default server locale. Defaults to `en`.
+- **MATTERMOST_CLIENT_LOCALE**: Default client locale. Defaults to `en`.
+- **MATTERMOST_LOCALES**: Available locales. This list must include at least the `MATTERMOST_CLIENT_LOCALE` value. Defaults to `en,es,fr,ja,pt-BR`.
 - **DB_ADAPTER**: The database type. Only supports `mysql`. Defaults to `mysql`.
 - **DB_HOST**: The database server hostname. No defaults.
 - **DB_PORT**: The database server port. Defaults to `3306` for mysql.
@@ -485,7 +489,7 @@ To upgrade to newer Mattermost releases, simply follow this 4 step upgrade proce
 - **Step 1**: Update the docker image.
 
 ```bash
-docker pull jasl8r/mattermost:3.0.2
+docker pull jasl8r/mattermost:3.1.0
 ```
 
 - **Step 2**: Stop and remove the currently running image
@@ -502,7 +506,7 @@ Backup your database and local file storage by your preferred backup method.  Al
 - **Step 4**: Start the image
 
 ```bash
-docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.0.2
+docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.1.0
 ```
 
 ### Upgrading to Version 3
@@ -515,7 +519,7 @@ In order to automatically upgrade the database, simply add the `MATTERMOST_MIGRA
 docker run --name mattermost -d --link mattermost-postgres:postgres \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
      --env 'MATTERMOST_MIGRATION_DEFAULT_TEAM=myteam' \
-     jasl8r/mattermost:3.0.2
+     jasl8r/mattermost:3.1.0
 ```
 
 Manually perform the migration by running the `app:migrate` command and follow the interactive prompt.
@@ -523,7 +527,7 @@ Manually perform the migration by running the `app:migrate` command and follow t
 ```bash
 docker run -it --name mattermost -d --link mattermost-postgres:postgres \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.0.2 app:migrate
+     jasl8r/mattermost:3.1.0 app:migrate
 ```
 
 ## Shell Access

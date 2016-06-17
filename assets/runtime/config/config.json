@@ -44,6 +44,7 @@
         "FileFormat": "",
         "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log" },
     "FileSettings": {
+        "MaxFileSize": {{MATTERMOST_MAX_FILE_SIZE}},
         "DriverName": "local",
         "Directory": "{{MATTERMOST_DATA_DIR}}",
         "EnablePublicLink": {{MATTERMOST_ENABLE_PUBLIC_LINKS}},
@@ -105,5 +106,10 @@
         "AuthEndpoint": "{{GITLAB_AUTH_ENDPOINT}}",
         "TokenEndpoint": "{{GITLAB_TOKEN_ENDPOINT}}",
         "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}" },
+    "LocalizationSettings": {
+        "DefaultServerLocale": "{{MATTERMOST_SERVER_LOCALE}}",
+        "DefaultClientLocale": "{{MATTERMOST_CLIENT_LOCALE}}",
+        "AvailableLocales": "{{MATTERMOST_LOCALES}}"
+    },
     "_": {}
 }

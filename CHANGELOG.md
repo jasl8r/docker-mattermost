@@ -4,6 +4,12 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
+## 3.1.0
+
+- mattermost 3.1.0
+- add MATTERMOST_SERVER_LOCALE, MATTERMOST_CLIENT_LOCALE and MATTERMOST_LOCALES variables
+- add MATTERMOST_MAX_FILE_SIZE
+
 ## 3.0.2
 
 - mattermost 3.0.2
