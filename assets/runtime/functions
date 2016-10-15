@@ -59,7 +59,7 @@ update_template() {
   # Replace placeholders
   (
     export ${VARIABLES[@]}
-    local IFS=":"; sudo -HEu ${USR} envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
+    local IFS=":"; envsubst "${VARIABLES[*]/#/$}" < ${tmp_file} > ${FILE}
   )
   rm -f ${tmp_file}
 }
@@ -78,9 +78,9 @@ initialize_logdir() {
 
 install_configuration_templates() {
   echo "Installing configuration templates..."
-  
+
   mkdir -p ${MATTERMOST_CONF_DIR}
-  
+
   install_template root: config.json ${MATTERMOST_CONFIG} 0640
 }
 
@@ -235,34 +235,27 @@ configure_mattermost() {
 }
 
 configure_smtp() {
-  if [[ -n ${SMTP_HOST} ]]; then
-    echo "Configuring SMTP..."
-    update_template ${MATTERMOST_CONFIG} \
-      SMTP_USER \
-      SMTP_PASS \
-      SMTP_HOST \
-      SMTP_PORT \
-      SMTP_SECURITY \
-      MATTERMOST_NAME \
-      MATTERMOST_EMAIL
-  else
-    sed -i "/SendEmailNotifications/,/ConnectionSecurity/d" ${MATTERMOST_CONFIG}
-  fi
+  echo "Configuring SMTP..."
+  update_template ${MATTERMOST_CONFIG} \
+    SMTP_USER \
+    SMTP_PASS \
+    SMTP_HOST \
+    SMTP_PORT \
+    SMTP_SECURITY \
+    MATTERMOST_NAME \
+    MATTERMOST_EMAIL
 }
 
 configure_gitlab() {
-  if [[ -n ${GITLAB_SECRET} ]]; then
-    echo "Configuring GitLab..."
-    update_template ${MATTERMOST_CONFIG} \
-      GITLAB_SECRET \
-      GITLAB_ID \
-      GITLAB_SCOPE \
-      GITLAB_AUTH_ENDPOINT \
-      GITLAB_TOKEN_ENDPOINT \
-      GITLAB_API_ENDPOINT
-  else
-    sed -i "/GitLabSettings/,/UserApiEndpoint/d" ${MATTERMOST_CONFIG}
-  fi
+  echo "Configuring GitLab..."
+  update_template ${MATTERMOST_CONFIG} \
+    GITLAB_ENABLE \
+    GITLAB_SECRET \
+    GITLAB_ID \
+    GITLAB_SCOPE \
+    GITLAB_AUTH_ENDPOINT \
+    GITLAB_TOKEN_ENDPOINT \
+    GITLAB_API_ENDPOINT
 }
 
 migrate_version() {

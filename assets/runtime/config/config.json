@@ -1,5 +1,6 @@
 {
     "ServiceSettings": {
+        "SiteURL": "",
         "ListenAddress": ":80",
         "MaximumLoginAttempts": {{MATTERMOST_MAX_LOGIN_ATTEMPTS}},
         "SegmentDeveloperKey": "{{MATTERMOST_SEGMENT_KEY}}",
@@ -15,19 +16,35 @@
         "EnableDeveloper": false,
         "EnableSecurityFixAlert": {{MATTERMOST_ENABLE_ALERTS}},
         "EnableInsecureOutgoingConnections": {{MATTERMOST_ENABLE_INSECURE_CONNECTIONS}},
+        "EnableMultifactorAuthentication": false,
         "AllowCorsFrom": "{{MATTERMOST_CORS_DOMAINS}}",
         "SessionLengthWebInDays": {{MATTERMOST_WEB_SESSION_DAYS}},
         "SessionLengthMobileInDays": {{MATTERMOST_MOBILE_SESSION_DAYS}},
         "SessionLengthSSOInDays": {{MATTERMOST_SSO_SESSION_DAYS}},
-        "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}} },
+        "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}},
+        "WebsocketSecurePort": 443,
+        "WebsocketPort": 80,
+        "WebserverMode": "gzip",
+        "EnableCustomEmoji": true,
+        "RestrictCustomEmojiCreation": ""
+    },
     "TeamSettings": {
         "SiteName": "{{MATTERMOST_NAME}}",
         "MaxUsersPerTeam": {{MATTERMOST_MAX_USERS}},
         "EnableTeamCreation": {{MATTERMOST_CREATE_TEAMS}},
         "EnableUserCreation": {{MATTERMOST_CREATE_USERS}},
+        "EnableOpenServer": {{MATTERMOST_OPEN_SERVER}},
         "RestrictCreationToDomains": "{{MATTERMOST_USER_DOMAINS}}",
         "RestrictTeamNames": {{MATTERMOST_RESTRICT_TEAM_NAMES}},
-        "EnableOpenServer": {{MATTERMOST_OPEN_SERVER}} },
+        "EnableCustomBrand": false,
+        "CustomBrandText": "",
+        "CustomDescriptionText": "",
+        "RestrictDirectMessage": "any",
+        "RestrictTeamInvite": "all",
+        "RestrictPublicChannelManagement": "all",
+        "RestrictPrivateChannelManagement": "all",
+        "UserStatusAwayTimeout": 300
+    },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
         "DataSource": "{{MATTERMOST_DATASOURCE}}",
@@ -35,14 +52,25 @@
         "MaxIdleConns": 10,
         "MaxOpenConns": 10,
         "Trace": false,
-        "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}" },
+        "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}"
+    },
     "LogSettings": {
         "EnableConsole": false,
         "ConsoleLevel": "INFO",
         "EnableFile": true,
         "FileLevel": "INFO",
         "FileFormat": "",
-        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log" },
+        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log",
+        "EnableWebhookDebugging": true,
+        "EnableDiagnostics": true
+    },
+    "PasswordSettings": {
+        "MinimumLength": 5,
+        "Lowercase": false,
+        "Number": false,
+        "Uppercase": false,
+        "Symbol": false
+    },
     "FileSettings": {
         "MaxFileSize": {{MATTERMOST_MAX_FILE_SIZE}},
         "DriverName": "local",
@@ -63,7 +91,8 @@
         "AmazonS3Endpoint": "",
         "AmazonS3BucketEndpoint": "",
         "AmazonS3LocationConstraint": false,
-        "AmazonS3LowercaseBucket": false },
+        "AmazonS3LowercaseBucket": false
+    },
     "EmailSettings": {
         "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
         "EnableSignInWithEmail": {{MATTERMOST_EMAIL_SIGNIN}},
@@ -72,6 +101,7 @@
         "RequireEmailVerification": {{MATTERMOST_EMAIL_VERIFICATION}},
         "FeedbackName": "{{MATTERMOST_NAME}}",
         "FeedbackEmail": "{{MATTERMOST_EMAIL}}",
+        "FeedbackOrganization": "",
         "SMTPUsername": "{{SMTP_USER}}",
         "SMTPPassword": "{{SMTP_PASS}}",
         "SMTPServer": "{{SMTP_HOST}}",
@@ -81,35 +111,114 @@
         "PasswordResetSalt": "{{MATTERMOST_RESET_SALT}}",
         "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},
         "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}",
-        "PushNotificationContents": "{{MATTERMOST_PUSH_CONTENTS}}" },
+        "PushNotificationContents": "{{MATTERMOST_PUSH_CONTENTS}}",
+        "EnableEmailBatching": false,
+        "EmailBatchingBufferSize": 256,
+        "EmailBatchingInterval": 30
+    },
     "RateLimitSettings": {
         "EnableRateLimiter": {{MATTERMOST_ENABLE_RATE_LIMIT}},
         "PerSec": {{MATTERMOST_RATE_LIMIT_QPS}},
         "MemoryStoreSize": {{MATTERMOST_RATE_LIMIT_SESSIONS}},
         "VaryByRemoteAddr": {{MATTERMOST_RATE_LIMIT_BY_IP}},
-        "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}" },
+        "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}"
+    },
     "PrivacySettings": {
         "ShowEmailAddress": {{MATTERMOST_SHOW_EMAIL}},
-        "ShowFullName": {{MATTERMOST_SHOW_NAME}} },
+        "ShowFullName": {{MATTERMOST_SHOW_NAME}}
+    },
     "SupportSettings": {
         "TermsOfServiceLink": "/static/help/terms.html",
         "PrivacyPolicyLink": "/static/help/privacy.html",
         "AboutLink": "/static/help/about.html",
         "HelpLink": "/static/help/help.html",
         "ReportAProblemLink": "/static/help/report_problem.html",
-        "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}" },
+        "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}"
+    },
     "GitLabSettings": {
-        "Enable": true,
+        "Enable": {{GITLAB_ENABLE}},
         "Secret": "{{GITLAB_SECRET}}",
         "Id": "{{GITLAB_ID}}",
         "Scope": "{{GITLAB_SCOPE}}",
         "AuthEndpoint": "{{GITLAB_AUTH_ENDPOINT}}",
         "TokenEndpoint": "{{GITLAB_TOKEN_ENDPOINT}}",
-        "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}" },
+        "UserApiEndpoint": "{{GITLAB_API_ENDPOINT}}"
+    },
+    "GoogleSettings": {
+        "Enable": false,
+        "Secret": "",
+        "Id": "",
+        "Scope": "profile email",
+        "AuthEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+        "TokenEndpoint": "https://www.googleapis.com/oauth2/v4/token",
+        "UserApiEndpoint": "https://www.googleapis.com/plus/v1/people/me"
+    },
+    "Office365Settings": {
+        "Enable": false,
+        "Secret": "",
+        "Id": "",
+        "Scope": "User.Read",
+        "AuthEndpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "TokenEndpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "UserApiEndpoint": "https://graph.microsoft.com/v1.0/me"
+    },
+    "LdapSettings": {
+        "Enable": false,
+        "LdapServer": "",
+        "LdapPort": 389,
+        "ConnectionSecurity": "",
+        "BaseDN": "",
+        "BindUsername": "",
+        "BindPassword": "",
+        "UserFilter": "",
+        "FirstNameAttribute": "",
+        "LastNameAttribute": "",
+        "EmailAttribute": "",
+        "UsernameAttribute": "",
+        "NicknameAttribute": "",
+        "IdAttribute": "",
+        "SyncIntervalMinutes": 60,
+        "SkipCertificateVerification": false,
+        "QueryTimeout": 60,
+        "MaxPageSize": 0,
+        "LoginFieldName": ""
+    },
+    "ComplianceSettings": {
+        "Enable": false,
+        "Directory": "./data/",
+        "EnableDaily": false
+    },
     "LocalizationSettings": {
         "DefaultServerLocale": "{{MATTERMOST_SERVER_LOCALE}}",
         "DefaultClientLocale": "{{MATTERMOST_CLIENT_LOCALE}}",
         "AvailableLocales": "{{MATTERMOST_LOCALES}}"
     },
-    "_": {}
+    "SamlSettings": {
+        "Enable": false,
+        "Verify": false,
+        "Encrypt": false,
+        "IdpUrl": "",
+        "IdpDescriptorUrl": "",
+        "AssertionConsumerServiceURL": "",
+        "IdpCertificateFile": "",
+        "PublicCertificateFile": "",
+        "PrivateKeyFile": "",
+        "FirstNameAttribute": "",
+        "LastNameAttribute": "",
+        "EmailAttribute": "",
+        "UsernameAttribute": "",
+        "NicknameAttribute": "",
+        "LocaleAttribute": "",
+        "LoginButtonText": "With SAML"
+    },
+    "NativeAppSettings": {
+        "AppDownloadLink": "https://about.mattermost.com/downloads/",
+        "AndroidAppDownloadLink": "https://about.mattermost.com/mattermost-android-app/",
+        "IosAppDownloadLink": "https://about.mattermost.com/mattermost-ios-app/"
+    },
+    "ClusterSettings": {
+        "Enable": false,
+        "InterNodeListenAddress": ":8075",
+        "InterNodeUrls": []
+    }
 }
