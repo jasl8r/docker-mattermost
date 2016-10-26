@@ -1,6 +1,6 @@
 {
     "ServiceSettings": {
-        "SiteURL": "",
+        "SiteURL": "{{MATTERMOST_SITE_URL}}",
         "ListenAddress": ":80",
         "MaximumLoginAttempts": {{MATTERMOST_MAX_LOGIN_ATTEMPTS}},
         "SegmentDeveloperKey": "{{MATTERMOST_SEGMENT_KEY}}",
@@ -24,8 +24,8 @@
         "SessionCacheInMinutes": {{MATTERMOST_SESSION_CACHE}},
         "WebsocketSecurePort": 443,
         "WebsocketPort": 80,
-        "WebserverMode": "gzip",
-        "EnableCustomEmoji": true,
+        "WebserverMode": "{{MATTERMOST_WEBSERVER_MODE}}",
+        "EnableCustomEmoji": {{MATTERMOST_ENABLE_CUSTOM_EMOJI}},
         "RestrictCustomEmojiCreation": ""
     },
     "TeamSettings": {
@@ -39,7 +39,7 @@
         "EnableCustomBrand": false,
         "CustomBrandText": "",
         "CustomDescriptionText": "",
-        "RestrictDirectMessage": "any",
+        "RestrictDirectMessage": "{{MATTERMOST_RESTRICT_DIRECT_MESSAGE}}",
         "RestrictTeamInvite": "all",
         "RestrictPublicChannelManagement": "all",
         "RestrictPrivateChannelManagement": "all",
@@ -112,7 +112,7 @@
         "SendPushNotifications": {{MATTERMOST_ENABLE_PUSH_NOTIFICATIONS}},
         "PushNotificationServer": "{{MATTERMOST_PUSH_SERVER}}",
         "PushNotificationContents": "{{MATTERMOST_PUSH_CONTENTS}}",
-        "EnableEmailBatching": false,
+        "EnableEmailBatching": {{MATTERMOST_ENABLE_EMAIL_BATCHING}},
         "EmailBatchingBufferSize": 256,
         "EmailBatchingInterval": 30
     },

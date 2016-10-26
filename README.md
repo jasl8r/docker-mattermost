@@ -411,6 +411,8 @@ Below is the complete list of available options that can be used to customize yo
 
 - **DEBUG**: Set this to `true` to enable entrypoint debugging.
 - **MATTERMOST_NAME**: The name of the Mattermost server. Defaults to `Mattermost`.
+- **MATTERMOST_SITE_URL**: The URL of the Mattermost server. Necessary to send batched emails.
+- **MATTERMOST_WEBSERVER_MODE**: Static file serving mode. May be set to `gzip`, `uncompressed` or `disabled`. Defaults to `gzip`.
 - **MATTERMOST_ENABLE_EMAIL_SIGNUP**: Enable or disable user signup via email. Defaults to `true`.
 - **MATTERMOST_SECRET_KEY**: Used to encrypt sensitive fields in the database. Ensure that you don't lose it. You can generate one using `pwgen -Bsv1 64`. No defaults.
 - **MATTERMOST_RESET_SALT**: Salt used to sign password reset emails. No defaults.
@@ -418,6 +420,8 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_MAX_LOGIN_ATTEMPTS**: Number of attempts a user may enter a password before being required to reset it. Defaults to `10`.
 - **MATTERMOST_SEGMENT_KEY**: Segment API key for tracking metrics. No defaults.
 - **MATTERMOST_GOOGLE_KEY**: Google API key for embeddeding YouTube videos. No defaults.
+- **MATTERMOST_RESTRICT_DIRECT_MESSAGE**: Configuration for direct messaging.  Set to `any` to allow users to message anyone on the server or `team` to message only members of the team. Defaults to `any`.
+- **MATTERMOST_ENABLE_CUSTOM_EMOJI**: Enable to allow users to create custom emoji. Defaults to `true`.
 - **MATTERMOST_ENABLE_ADMIN_INTEGRATIONS**: Disable to allow any user to add integrations. Defaults to `true`.
 - **MATTERMOST_ENABLE_SLASH_COMMANDS**: Enable to allow users to create custom slash commands. Defaults to `false`.
 - **MATTERMOST_ENABLE_INCOMING_WEBHOOKS**: Enable to allow incoming webhooks. Defaults to `false`.
@@ -439,6 +443,7 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_RESTRICT_TEAM_NAMES**: Restrict the names for new teams. Defaults to `true`.
 - **MATTERMOST_EMAIL_SIGNIN**: Allow users to sign in with their email. Defaults to `true`.
 - **MATTERMOST_USERNAME_SIGNIN**: Allow users to sign in with their username. Defaults to `false`.
+- **MATTERMOST_ENABLE_EMAIL_BATCHING**: Enable to batch multiple user notifications into a single email. Defaults to `true` if `MATTERMOST_SITE_URL` and `MATTERMOST_EMAIL_NOTIFICATIONS` are set.
 - **MATTERMOST_PUSH_SERVER**: Location of the Mattermost Push Notification Service (MPNS). No defaults.
 - **MATTERMOST_ENABLE_PUSH_NOTIFICATIONS**: Enable to send push notifications. Defaults to `true` if `MATTERMOST_PUSH_SERVER` is set.
 - **MATTERMOST_PUSH_FULL_MESSAGE**: Enable to send full message for push notifications. Otherwise only the names and channels will be sent. Defaults to `false`.

@@ -7,6 +7,10 @@ for the list of changes in Mattermost.
 ## 3.4.0
 
 - mattermost 3.4.0
+- add `MATTERMOST_SITE_URL` and `MATTERMOST_ENABLE_EMAIL_BATCHING` variables
+- add `MATTERMOST_WEBSERVER_MODE` variable to control static file handling
+- add `MATTERMOST_ENABLE_CUSTOM_EMOJI` variable
+- add `MATTERMOST_RESTRICT_DIRECT_MESSAGE` variable
 
 ## 3.1.0
 
