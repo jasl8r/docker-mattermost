@@ -7,11 +7,11 @@ mysql:
     - MYSQL_DATABASE=mattermost
     - MYSQL_ROOT_PASSWORD=password
   volumes:
-    - /srv/docker/gitlab/mysql:/var/lib/mysql
+    - /srv/docker/mattermost/mysql:/var/lib/mysql
 
 mattermost:
   restart: always
-  image: jasl8r/mattermost:3.1.0
+  image: jasl8r/mattermost:3.4.0
   links:
     - mysql:mysql
   ports:
