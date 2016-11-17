@@ -276,6 +276,18 @@ migrate_version() {
     return 1
   fi
 
+  if [[ $(vercmp ${MATTERMOST_VERSION} 3.4.0) -ge 0 &&
+        $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+    echo "  Mattermost version ${CACHE_VERSION} must be upgraded to version 3.0.2 or 3.1.0 first."
+    echo "  Please run jasl8r/mattermost:3.1.0 followed by jasl8r/mattermost:${MATTERMOST_VERSION}"
+    echo "  Cannot continue. Aborting!"
+    echo
+    return 1
+  fi
+
   # Handle version 3 migration
   if [[ $(vercmp ${MATTERMOST_VERSION} 3.0.0) -ge 0 &&
         $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
