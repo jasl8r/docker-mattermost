@@ -2,6 +2,14 @@
     "ServiceSettings": {
         "SiteURL": "{{MATTERMOST_SITE_URL}}",
         "ListenAddress": ":80",
+        "ConnectionSecurity": "",
+        "TLSCertFile": "",
+        "TLSKeyFile": "",
+        "UseLetsEncrypt": false,
+        "LetsEncryptCertificateCacheFile": "./config/letsencrypt.cache",
+        "Forward80To443": false,
+        "ReadTimeout": 300,
+        "WriteTimeout": 300,
         "MaximumLoginAttempts": {{MATTERMOST_MAX_LOGIN_ATTEMPTS}},
         "SegmentDeveloperKey": "{{MATTERMOST_SEGMENT_KEY}}",
         "GoogleDeveloperKey": "{{MATTERMOST_GOOGLE_KEY}}",
@@ -35,7 +43,6 @@
         "EnableUserCreation": {{MATTERMOST_CREATE_USERS}},
         "EnableOpenServer": {{MATTERMOST_OPEN_SERVER}},
         "RestrictCreationToDomains": "{{MATTERMOST_USER_DOMAINS}}",
-        "RestrictTeamNames": {{MATTERMOST_RESTRICT_TEAM_NAMES}},
         "EnableCustomBrand": false,
         "CustomBrandText": "",
         "CustomDescriptionText": "",
@@ -43,14 +50,15 @@
         "RestrictTeamInvite": "all",
         "RestrictPublicChannelManagement": "all",
         "RestrictPrivateChannelManagement": "all",
-        "UserStatusAwayTimeout": 300
+        "UserStatusAwayTimeout": 300,
+        "MaxChannelsPerTeam": 2000
     },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
         "DataSource": "{{MATTERMOST_DATASOURCE}}",
         "DataSourceReplicas": [],
-        "MaxIdleConns": 10,
-        "MaxOpenConns": 10,
+        "MaxIdleConns": 20,
+        "MaxOpenConns": 300,
         "Trace": false,
         "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}"
     },
@@ -87,11 +95,9 @@
         "AmazonS3AccessKeyId": "",
         "AmazonS3SecretAccessKey": "",
         "AmazonS3Bucket": "",
-        "AmazonS3Region": "",
-        "AmazonS3Endpoint": "",
-        "AmazonS3BucketEndpoint": "",
-        "AmazonS3LocationConstraint": false,
-        "AmazonS3LowercaseBucket": false
+        "AmazonS3Region": "us-east-1",
+        "AmazonS3Endpoint": "s3.amazonaws.com",
+        "AmazonS3SSL": true
     },
     "EmailSettings": {
         "EnableSignUpWithEmail": {{MATTERMOST_ENABLE_EMAIL_SIGNUP}},
@@ -119,6 +125,7 @@
     "RateLimitSettings": {
         "EnableRateLimiter": {{MATTERMOST_ENABLE_RATE_LIMIT}},
         "PerSec": {{MATTERMOST_RATE_LIMIT_QPS}},
+        "MaxBurst": 100,
         "MemoryStoreSize": {{MATTERMOST_RATE_LIMIT_SESSIONS}},
         "VaryByRemoteAddr": {{MATTERMOST_RATE_LIMIT_BY_IP}},
         "VaryByHeader": "{{MATTERMOST_RATE_LIMIT_HEADERS}}"
@@ -220,5 +227,15 @@
         "Enable": false,
         "InterNodeListenAddress": ":8075",
         "InterNodeUrls": []
+    },
+    "WebrtcSettings": {
+        "Enable": false,
+        "GatewayWebsocketUrl": "",
+        "GatewayAdminUrl": "",
+        "GatewayAdminSecret": "",
+        "StunURI": "",
+        "TurnURI": "",
+        "TurnUsername": "",
+        "TurnSharedKey": ""
     }
 }

@@ -4,6 +4,10 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
+## 3.5.1
+
+- mattermost 3.5.1
+
 ## 3.4.0-1
 
 - add error message to require upgrading to 3.0 or 3.1 before any higher version
