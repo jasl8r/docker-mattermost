@@ -102,7 +102,6 @@ finalize_database_parameters() {
     DB_USER=${DB_USER:-${POSTGRES_ENV_POSTGRES_USER}}
     DB_PASS=${DB_PASS:-${POSTGRES_ENV_POSTGRES_PASSWORD}}
     DB_NAME=${DB_NAME:-${POSTGRES_ENV_POSTGRES_DB}}
-    DB_NAME=${DB_NAME:-${POSTGRES_ENV_POSTGRES_USER}}
   fi
 
   if [[ -z ${DB_HOST} ]]; then
