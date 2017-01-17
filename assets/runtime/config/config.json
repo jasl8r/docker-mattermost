@@ -25,6 +25,7 @@
         "EnableSecurityFixAlert": {{MATTERMOST_ENABLE_ALERTS}},
         "EnableInsecureOutgoingConnections": {{MATTERMOST_ENABLE_INSECURE_CONNECTIONS}},
         "EnableMultifactorAuthentication": false,
+        "EnforceMultifactorAuthentication": false,
         "AllowCorsFrom": "{{MATTERMOST_CORS_DOMAINS}}",
         "SessionLengthWebInDays": {{MATTERMOST_WEB_SESSION_DAYS}},
         "SessionLengthMobileInDays": {{MATTERMOST_MOBILE_SESSION_DAYS}},
@@ -48,10 +49,15 @@
         "CustomDescriptionText": "",
         "RestrictDirectMessage": "{{MATTERMOST_RESTRICT_DIRECT_MESSAGE}}",
         "RestrictTeamInvite": "all",
+        "RestrictPublicChannelCreation": "all",
+        "RestrictPrivateChannelCreation": "all",
         "RestrictPublicChannelManagement": "all",
         "RestrictPrivateChannelManagement": "all",
+        "RestrictPublicChannelDeletion": "all",
+        "RestrictPrivateChannelDeletion": "all",
         "UserStatusAwayTimeout": 300,
-        "MaxChannelsPerTeam": 2000
+        "MaxChannelsPerTeam": 2000,
+        "MaxNotificationsPerChannel": 1000
     },
     "SqlSettings": {
         "DriverName": "{{DB_ADAPTER}}",
@@ -135,11 +141,11 @@
         "ShowFullName": {{MATTERMOST_SHOW_NAME}}
     },
     "SupportSettings": {
-        "TermsOfServiceLink": "/static/help/terms.html",
-        "PrivacyPolicyLink": "/static/help/privacy.html",
-        "AboutLink": "/static/help/about.html",
-        "HelpLink": "/static/help/help.html",
-        "ReportAProblemLink": "/static/help/report_problem.html",
+        "TermsOfServiceLink": "https://about.mattermost.com/default-terms/",
+        "PrivacyPolicyLink": "https://about.mattermost.com/default-privacy-policy/",
+        "AboutLink": "https://about.mattermost.com/default-about/",
+        "HelpLink": "https://about.mattermost.com/default-help/",
+        "ReportAProblemLink": "https://about.mattermost.com/default-report-a-problem/",
         "SupportEmail": "{{MATTERMOST_SUPPORT_EMAIL}}"
     },
     "GitLabSettings": {
@@ -184,6 +190,7 @@
         "UsernameAttribute": "",
         "NicknameAttribute": "",
         "IdAttribute": "",
+        "PositionAttribute": "",
         "SyncIntervalMinutes": 60,
         "SkipCertificateVerification": false,
         "QueryTimeout": 60,
@@ -216,6 +223,7 @@
         "UsernameAttribute": "",
         "NicknameAttribute": "",
         "LocaleAttribute": "",
+        "PositionAttribute": "",
         "LoginButtonText": "With SAML"
     },
     "NativeAppSettings": {
@@ -227,6 +235,14 @@
         "Enable": false,
         "InterNodeListenAddress": ":8075",
         "InterNodeUrls": []
+    },
+    "MetricsSettings": {
+        "Enable": false,
+        "BlockProfileRate": 0,
+        "ListenAddress": ":8067"
+    },
+    "AnalyticsSettings": {
+        "MaxUsersForStatistics": 2500
     },
     "WebrtcSettings": {
         "Enable": false,
