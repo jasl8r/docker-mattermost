@@ -262,59 +262,6 @@ configure_gitlab() {
     GITLAB_API_ENDPOINT
 }
 
-migrate_version() {
-  CACHE_VERSION=$1
-
-  if [[ $(vercmp ${MATTERMOST_VERSION} ${CACHE_VERSION}) -lt 0 ]]; then
-    echo
-    echo "ERROR: "
-    echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
-    echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
-    echo "  Cannot continue. Aborting!"
-    echo
-    return 1
-  fi
-
-  if [[ $(vercmp ${MATTERMOST_VERSION} 3.4.0) -ge 0 &&
-        $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
-    echo
-    echo "ERROR: "
-    echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
-    echo "  Mattermost version ${CACHE_VERSION} must be upgraded to version 3.0.2 or 3.1.0 first."
-    echo "  Please run jasl8r/mattermost:3.1.0 followed by jasl8r/mattermost:${MATTERMOST_VERSION}"
-    echo "  Cannot continue. Aborting!"
-    echo
-    return 1
-  fi
-
-  # Handle version 3 migration
-  if [[ $(vercmp ${MATTERMOST_VERSION} 3.0.0) -ge 0 &&
-        $(vercmp ${CACHE_VERSION} 3.0.0) -lt 0 ]]; then
-    echo "Migrating database to version 3.0"
-    if [[ $INTERACTIVE -eq 1 ]]; then
-      ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json -upgrade_db_30
-    elif [[ -n ${MATTERMOST_MIGRATION_DEFAULT_TEAM} ]]; then
-      rm -f /tmp/fifo
-      mkfifo /tmp/fifo
-      exec 3<> /tmp/fifo
-      echo YES > /tmp/fifo
-      echo ${MATTERMOST_MIGRATION_DEFAULT_TEAM} > /tmp/fifo
-      ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json -upgrade_db_30 < /tmp/fifo
-      rm /tmp/fifo
-    else
-      echo
-      echo "ERROR: "
-      echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
-      echo "  Mattermost version 3.0.0 introduced a major user model change that requires"
-      echo "  defining a default team.  You may interactively run this upgrade by running"
-      echo "  the app:upgrade task or you may automatically perform the upgrade by specifying"
-      echo "  your default team in the MATTERMOST_MIGRATION_DEFAULT_TEAM environment variable."
-      echo
-      return 1
-    fi
-  fi
-}
-
 initialize() {
   echo "Initializing mattermost..."
   initialize_datadir
@@ -331,30 +278,28 @@ configure() {
 }
 
 migrate() {
-  INTERACTIVE=$([[ ${1} = "-interactive" ]] && echo 1 || echo 0)
+  [[ -f ${MATTERMOST_DATA_DIR}/VERSION ]] && CACHE_VERSION=$(cat ${MATTERMOST_DATA_DIR}/VERSION)
+  CACHE_VERSION=${CACHE_VERSION:-2.0.0}
 
-  # check if this is a new installation
-  case ${DB_ADAPTER} in
-    mysql)
-      QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = '${DB_NAME}';"
-      COUNT=$(mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} ${DB_PASS:+-p$DB_PASS} -ss -e "${QUERY}")
-      ;;
-    postgres)
-      QUERY="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';"
-      COUNT=$(PGPASSWORD="${DB_PASS}" psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -Atw -c "${QUERY}")
-      ;;
-  esac
+  if [[ $(vercmp ${MATTERMOST_VERSION} ${CACHE_VERSION}) -lt 0 ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Cannot downgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+    echo "  Only upgrades are allowed. Please use jasl8r/mattermost:${CACHE_VERSION} or higher."
+    echo "  Cannot continue. Aborting!"
+    echo
+    return 1
+  fi
 
-  if [[ -z ${COUNT} || ${COUNT} -eq 0 ]]; then
-    echo "Configuring new Mattermost installation..."
-  else
-    # check if the mattermost version has changed.
-    [[ -f ${MATTERMOST_DATA_DIR}/VERSION ]] && CACHE_VERSION=$(cat ${MATTERMOST_DATA_DIR}/VERSION)
-    CACHE_VERSION=${CACHE_VERSION:-2.0.0}
-
-    if [[ ${MATTERMOST_VERSION} != ${CACHE_VERSION} ]]; then
-      migrate_version $CACHE_VERSION
-    fi
+  if [[ $(vercmp ${CACHE_VERSION} 3.5.1) -lt 0 ]]; then
+    echo
+    echo "ERROR: "
+    echo "  Cannot upgrade from Mattermost version ${CACHE_VERSION} to ${MATTERMOST_VERSION}."
+    echo "  Mattermost version ${CACHE_VERSION} must be upgraded to version 3.5.1 first."
+    echo "  Please run jasl8r/mattermost:3.5.1 followed by jasl8r/mattermost:${MATTERMOST_VERSION}"
+    echo "  Cannot continue. Aborting!"
+    echo
+    return 1
   fi
 
   echo "${MATTERMOST_VERSION}" > ${MATTERMOST_DATA_DIR}/VERSION

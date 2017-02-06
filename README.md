@@ -479,7 +479,6 @@ Below is the complete list of available options that can be used to customize yo
 - **GITLAB_AUTH_ENDPOINT**: GitLab API authentication endpoint. No defaults.
 - **GITLAB_TOKEN_ENDPOINT**: GitLab API token endpoint. No defaults.
 - **GITLAB_API_ENDPOINT**: GitLab API endpoint. No defaults.
-- **MATTERMOST_MIGRATION_DEFAULT_TEAM**: The default team to use during the Mattermost version 3 migration. No defaults.
 
 # Maintenance
 
@@ -510,27 +509,6 @@ Backup your database and local file storage by your preferred backup method.  Al
 
 ```bash
 docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.6.2
-```
-
-### Upgrading to Version 3
-
-With Mattermost version 3.0.0, the database must be destructively migrated to support the new global user model.  This upgrade may be performed automatically or interactively using the built-in Mattermost upgrade mechanism.  Due to the destructive and pervasive nature of this upgrade, it is imperative that you perform a backup of the database before upgrading.
-
-In order to automatically upgrade the database, simply add the `MATTERMOST_MIGRATION_DEFAULT_TEAM` environment variable with the name of primary team used during the migration.
-
-```bash
-docker run --name mattermost -d --link mattermost-postgres:postgres \
-     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     --env 'MATTERMOST_MIGRATION_DEFAULT_TEAM=myteam' \
-     jasl8r/mattermost:3.6.2
-```
-
-Manually perform the migration by running the `app:migrate` command and follow the interactive prompt.
-
-```bash
-docker run -it --name mattermost -d --link mattermost-postgres:postgres \
-     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.6.2 app:migrate
 ```
 
 ## Shell Access

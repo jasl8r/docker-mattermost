@@ -9,19 +9,12 @@ case ${1} in
     initialize
     configure
     migrate
-    ./bin/platform -config ${MATTERMOST_CONF_DIR}/config.json
-    ;;
-
-  app:migrate)
-    initialize
-    configure
-    migrate -interactive
+    exec ./bin/platform --config ${MATTERMOST_CONF_DIR}/config.json server
     ;;
 
   app:help)
     echo "Available options:"
     echo " app:start        - Starts the mattermost server (default)"
-    echo " app:migrate      - Interactively migrate the mattermost server"
     echo " app:help         - Displays the help"
     echo " [command]        - Execute the specified command, eg. bash."
     ;;
