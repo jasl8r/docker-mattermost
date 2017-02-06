@@ -69,11 +69,11 @@
         "AtRestEncryptKey": "{{MATTERMOST_SECRET_KEY}}"
     },
     "LogSettings": {
-        "EnableConsole": false,
-        "ConsoleLevel": "INFO",
-        "EnableFile": true,
-        "FileLevel": "INFO",
-        "FileFormat": "",
+        "EnableConsole": {{MATTERMOST_LOG_CONSOLE}},
+        "ConsoleLevel": "{{MATTERMOST_LOG_CONSOLE_LEVEL}}",
+        "EnableFile": {{MATTERMOST_LOG_FILE}},
+        "FileLevel": "{{MATTERMOST_LOG_FILE_LEVEL}}",
+        "FileFormat": "{{MATTERMOST_LOG_FILE_FORMAT}}",
         "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log",
         "EnableWebhookDebugging": true,
         "EnableDiagnostics": true

@@ -313,7 +313,7 @@ Please refer the [Available Configuration Parameters](#available-configuration-p
 
 ### SSL
 
-The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document. 
+The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document.
 
 A docker compose file, `samples/nginx/docker-compose.yml` is included to run nginx as a proxy in front of mattermost. This configuration requires runtime data provided as docker volumes:
 
@@ -411,6 +411,9 @@ Below is the complete list of available options that can be used to customize yo
 - **DEBUG**: Set this to `true` to enable entrypoint debugging.
 - **MATTERMOST_NAME**: The name of the Mattermost server. Defaults to `Mattermost`.
 - **MATTERMOST_SITE_URL**: The URL of the Mattermost server. Necessary to send batched emails.
+- **MATTERMOST_LOG_CONSOLE_LEVEL**: The logging level for the console, can be `off`. Defaults to `INFO`.
+- **MATTERMOST_LOG_FILE_LEVEL**: The logging level for the console, can be `off`. Defaults to `off`.
+- **MATTERMOST_LOG_FILE_FORMAT**: The [format string](https://docs.mattermost.com/administration/config-settings.html#file-log-format) for messages written to log files. No default.
 - **MATTERMOST_WEBSERVER_MODE**: Static file serving mode. May be set to `gzip`, `uncompressed` or `disabled`. Defaults to `gzip`.
 - **MATTERMOST_ENABLE_EMAIL_SIGNUP**: Enable or disable user signup via email. Defaults to `true`.
 - **MATTERMOST_SECRET_KEY**: Used to encrypt sensitive fields in the database. Ensure that you don't lose it. You can generate one using `pwgen -Bsv1 64`. No defaults.
@@ -424,7 +427,7 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_ENABLE_ADMIN_INTEGRATIONS**: Disable to allow any user to add integrations. Defaults to `true`.
 - **MATTERMOST_ENABLE_SLASH_COMMANDS**: Enable to allow users to create custom slash commands. Defaults to `false`.
 - **MATTERMOST_ENABLE_INCOMING_WEBHOOKS**: Enable to allow incoming webhooks. Defaults to `false`.
-- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`. 
+- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_USERNAME**: Enable to allow webhooks to set the username for a post. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_ICON**: Enable to allow webhooks to set the icon for a post. Defaults to `false`.
 - **MATTERMOST_ENABLE_ALERTS**: Send administrators an email if security fixes are announced. Defaults to `true`.
