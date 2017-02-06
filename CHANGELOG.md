@@ -4,9 +4,9 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
-## 3.6.0
+## 3.6.2
 
-- mattermost 3.6.0
+- mattermost 3.6.2
 
 ## 3.5.1
 
