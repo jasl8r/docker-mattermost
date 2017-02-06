@@ -303,8 +303,7 @@ If you are using Gmail then all you need to do is:
 
 ```bash
 docker run --name mattermost -d \
-    --env 'SMTP_USER=USER@gmail.com' --env 'SMTP_PASS=PASSWORD'
-    --env 'SMTP_DOMAIN=www.gmail.com' \
+    --env 'SMTP_USER=USER@gmail.com' --env 'SMTP_PASS=PASSWORD' \
     --env 'SMTP_HOST=smtp.gmail.com' --env 'SMTP_PORT=587' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
     jasl8r/mattermost:3.6.2
