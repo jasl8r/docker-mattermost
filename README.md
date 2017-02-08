@@ -53,7 +53,7 @@ Automated builds of the image are available on [Dockerhub](https://hub.docker.co
 > **Note**: Builds are also available on [Quay.io](https://quay.io/repository/jasl8r/mattermost)
 
 ```bash
-docker pull jasl8r/mattermost:3.5.1
+docker pull jasl8r/mattermost:3.6.2
 ```
 
 You can also pull the `latest` tag which is built from the repository *HEAD*
@@ -109,7 +109,7 @@ docker run --name mattermost -d \
     --env 'MATTERMOST_RESET_SALT=long-and-random-alphanumeric-string' \
     --env 'MATTERMOST_INVITE_SALT=long-and-random-alphanumeric-string' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.5.1
+    jasl8r/mattermost:3.6.2
 ```
 
 *Please refer to [Available Configuration Parameters](#available-configuration-parameters) to understand `MATTERMOST_PORT` and other configuration options*
@@ -142,7 +142,7 @@ Volumes can be mounted in docker by specifying the `-v` option in the docker run
 ```bash
 docker run --name mattermost -d \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.5.1
+    jasl8r/mattermost:3.6.2
 ```
 
 ## Database
@@ -173,7 +173,7 @@ docker run --name mattermost -d \
     --env 'DB_NAME=mattermost' \
     --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.5.1
+    jasl8r/mattermost:3.6.2
 ```
 
 #### Linking to MySQL Container
@@ -216,7 +216,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-mysql:mysql \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.5.1
+    jasl8r/mattermost:3.6.2
 ```
 
 Here the image will also automatically fetch the `MYSQL_DATABASE`, `MYSQL_USER` and `MYSQL_PASSWORD` variables from the mysql container as they are specified in the `docker run` command for the mysql container. This is made possible using the magic of docker links and works with the following images:
@@ -248,7 +248,7 @@ docker run --name mattermost -d \
      --env 'DB_NAME=mattermost' \
      --env 'DB_USER=mattermost' --env 'DB_PASS=password' \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.5.1
+     jasl8r/mattermost:3.6.2
 ```
 
 #### Linking to PostgreSQL Container
@@ -290,7 +290,7 @@ We are now ready to start the Mattermost application.
 ```bash
 docker run --name mattermost -d --link mattermost-postgres:postgres \
      --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.5.1
+     jasl8r/mattermost:3.6.2
 ```
 
 Here the image will also automatically fetch the `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` variables from the postgres container as they are specified in the `docker run` command for the postgres container. This is made possible using the magic of docker links and works with the official [postgres](https://hub.docker.com/_/postgres/) image.
@@ -303,18 +303,17 @@ If you are using Gmail then all you need to do is:
 
 ```bash
 docker run --name mattermost -d \
-    --env 'SMTP_USER=USER@gmail.com' --env 'SMTP_PASS=PASSWORD'
-    --env 'SMTP_DOMAIN=www.gmail.com' \
+    --env 'SMTP_USER=USER@gmail.com' --env 'SMTP_PASS=PASSWORD' \
     --env 'SMTP_HOST=smtp.gmail.com' --env 'SMTP_PORT=587' \
     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-    jasl8r/mattermost:3.5.1
+    jasl8r/mattermost:3.6.2
 ```
 
 Please refer the [Available Configuration Parameters](#available-configuration-parameters) section for the list of SMTP parameters that can be specified.
 
 ### SSL
 
-The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document. 
+The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document.
 
 A docker compose file, `samples/nginx/docker-compose.yml` is included to run nginx as a proxy in front of mattermost. This configuration requires runtime data provided as docker volumes:
 
@@ -412,6 +411,9 @@ Below is the complete list of available options that can be used to customize yo
 - **DEBUG**: Set this to `true` to enable entrypoint debugging.
 - **MATTERMOST_NAME**: The name of the Mattermost server. Defaults to `Mattermost`.
 - **MATTERMOST_SITE_URL**: The URL of the Mattermost server. Necessary to send batched emails.
+- **MATTERMOST_LOG_CONSOLE_LEVEL**: The logging level for the console, can be `off`. Defaults to `INFO`.
+- **MATTERMOST_LOG_FILE_LEVEL**: The logging level for the console, can be `off`. Defaults to `off`.
+- **MATTERMOST_LOG_FILE_FORMAT**: The [format string](https://docs.mattermost.com/administration/config-settings.html#file-log-format) for messages written to log files. No default.
 - **MATTERMOST_WEBSERVER_MODE**: Static file serving mode. May be set to `gzip`, `uncompressed` or `disabled`. Defaults to `gzip`.
 - **MATTERMOST_ENABLE_EMAIL_SIGNUP**: Enable or disable user signup via email. Defaults to `true`.
 - **MATTERMOST_SECRET_KEY**: Used to encrypt sensitive fields in the database. Ensure that you don't lose it. You can generate one using `pwgen -Bsv1 64`. No defaults.
@@ -425,7 +427,7 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_ENABLE_ADMIN_INTEGRATIONS**: Disable to allow any user to add integrations. Defaults to `true`.
 - **MATTERMOST_ENABLE_SLASH_COMMANDS**: Enable to allow users to create custom slash commands. Defaults to `false`.
 - **MATTERMOST_ENABLE_INCOMING_WEBHOOKS**: Enable to allow incoming webhooks. Defaults to `false`.
-- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`. 
+- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_USERNAME**: Enable to allow webhooks to set the username for a post. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_ICON**: Enable to allow webhooks to set the icon for a post. Defaults to `false`.
 - **MATTERMOST_ENABLE_ALERTS**: Send administrators an email if security fixes are announced. Defaults to `true`.
@@ -480,7 +482,6 @@ Below is the complete list of available options that can be used to customize yo
 - **GITLAB_AUTH_ENDPOINT**: GitLab API authentication endpoint. No defaults.
 - **GITLAB_TOKEN_ENDPOINT**: GitLab API token endpoint. No defaults.
 - **GITLAB_API_ENDPOINT**: GitLab API endpoint. No defaults.
-- **MATTERMOST_MIGRATION_DEFAULT_TEAM**: The default team to use during the Mattermost version 3 migration. No defaults.
 
 # Maintenance
 
@@ -493,7 +494,7 @@ To upgrade to newer Mattermost releases, simply follow this 4 step upgrade proce
 - **Step 1**: Update the docker image.
 
 ```bash
-docker pull jasl8r/mattermost:3.5.1
+docker pull jasl8r/mattermost:3.6.2
 ```
 
 - **Step 2**: Stop and remove the currently running image
@@ -510,28 +511,7 @@ Backup your database and local file storage by your preferred backup method.  Al
 - **Step 4**: Start the image
 
 ```bash
-docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.5.1
-```
-
-### Upgrading to Version 3
-
-With Mattermost version 3.0.0, the database must be destructively migrated to support the new global user model.  This upgrade may be performed automatically or interactively using the built-in Mattermost upgrade mechanism.  Due to the destructive and pervasive nature of this upgrade, it is imperative that you perform a backup of the database before upgrading.
-
-In order to automatically upgrade the database, simply add the `MATTERMOST_MIGRATION_DEFAULT_TEAM` environment variable with the name of primary team used during the migration.
-
-```bash
-docker run --name mattermost -d --link mattermost-postgres:postgres \
-     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     --env 'MATTERMOST_MIGRATION_DEFAULT_TEAM=myteam' \
-     jasl8r/mattermost:3.5.1
-```
-
-Manually perform the migration by running the `app:migrate` command and follow the interactive prompt.
-
-```bash
-docker run -it --name mattermost -d --link mattermost-postgres:postgres \
-     --volume /srv/docker/mattermost/mattermost:/opt/mattermost/data \
-     jasl8r/mattermost:3.5.1 app:migrate
+docker run --name mattermost -d [OPTIONS] jasl8r/mattermost:3.6.2
 ```
 
 ## Shell Access

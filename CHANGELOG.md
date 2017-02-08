@@ -4,6 +4,12 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
+## 3.6.2
+
+- mattermost 3.6.2
+- add `MATTERMOST_LOG_CONSOLE_LEVEL`, `MATTERMOST_LOG_FILE_LEVEL` and
+  `MATTERMOST_LOG_FILE_FORMAT`
+
 ## 3.5.1
 
 - mattermost 3.5.1
