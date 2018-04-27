@@ -40,11 +40,11 @@ Dockerfile to build a [Mattermost](https://www.mattermost.org/) container image.
 If you find this image useful here's how you can help:
 
 - Send a Pull Request with your awesome new features and bug fixes
-- Help new users with [Issues](https://github.com/jasl8r/docker-mattermost/issues) they may encounter
+- Help new users with [Issues](https://github.com/euranova/docker-mattermost/issues) they may encounter
 
 # Issues
 
-Please file a issue request on the [issues](https://github.com/jasl8r/docker-mattermost/issues) page.
+Please file a issue request on the [issues](https://github.com/euranova/docker-mattermost/issues) page.
 
 # Installation
 
@@ -73,7 +73,7 @@ docker build -t jasl8r/mattermost github.com/jasl8r/docker-mattermost
 The quickest way to get started is using [docker-compose](https://docs.docker.com/compose/).
 
 ```bash
-wget https://raw.githubusercontent.com/jasl8r/docker-mattermost/master/docker-compose.yml
+wget https://raw.githubusercontent.com/euranova/docker-mattermost/master/docker-compose.yml
 ```
 
 Generate and assign random strings to the `MATTERMOST_SECRET_KEY`, `MATTERMOST_LINK_SALT`, `MATTERMOST_RESET_SALT` and `MATTERMOST_INVITE_SALT` environment variables. Once set you should not change these values and ensure you backup these values.
@@ -314,7 +314,7 @@ Please refer the [Available Configuration Parameters](#available-configuration-p
 
 ### SSL
 
-The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document. 
+The mattermost container and default docker compose configuration only provides an insecure HTTP interface. To ensure privacy mattermost should be run behind a proxy like nginx, haproxy or hipache to perform HTTPS termination via SSL offload. Configuring and utilizing proxies beyond using the sample nginx docker compose solution presented below are outside the scope of this document.
 
 A docker compose file, `samples/nginx/docker-compose.yml` is included to run nginx as a proxy in front of mattermost. This configuration requires runtime data provided as docker volumes:
 
@@ -425,7 +425,7 @@ Below is the complete list of available options that can be used to customize yo
 - **MATTERMOST_ENABLE_ADMIN_INTEGRATIONS**: Disable to allow any user to add integrations. Defaults to `true`.
 - **MATTERMOST_ENABLE_SLASH_COMMANDS**: Enable to allow users to create custom slash commands. Defaults to `false`.
 - **MATTERMOST_ENABLE_INCOMING_WEBHOOKS**: Enable to allow incoming webhooks. Defaults to `false`.
-- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`. 
+- **MATTERMOST_ENABLE_OUTGOING_WEBHOOKS**: Enable to allow outgoing webhooks. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_USERNAME**: Enable to allow webhooks to set the username for a post. Defaults to `false`.
 - **MATTERMOST_WEBHOOK_OVERRIDE_ICON**: Enable to allow webhooks to set the icon for a post. Defaults to `false`.
 - **MATTERMOST_ENABLE_ALERTS**: Send administrators an email if security fixes are announced. Defaults to `true`.
@@ -544,6 +544,6 @@ docker exec -it mattermost bash
 
 # References
 
-* https://github.com/mattermost/platform
+* https://github.com/mattermost/mattermost-server
 * http://docs.mattermost.com/
 * https://github.com/sameersbn/docker-gitlab
