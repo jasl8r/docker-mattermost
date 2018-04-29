@@ -68,7 +68,7 @@
         "EnableFile": true,
         "FileLevel": "INFO",
         "FileFormat": "",
-        "FileLocation": "{{MATTERMOST_LOG_DIR}}/mattermost.log",
+        "FileLocation": "{{MATTERMOST_LOG_DIR}}",
         "EnableWebhookDebugging": true,
         "EnableDiagnostics": true
     },

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-MATTERMOST_CLONE_URL=https://github.com/mattermost/platform.git
+MATTERMOST_CLONE_URL=https://github.com/mattermost/mattermost-server.git
 
 export GOPATH=/opt/go
 MATTERMOST_BUILD_PATH=${GOPATH}/src/github.com/mattermost
@@ -23,7 +23,7 @@ echo "Cloning Mattermost ${MATTERMOST_VERSION}..."
 git clone -q -b v${MATTERMOST_VERSION} --depth 1 ${MATTERMOST_CLONE_URL}
 
 echo "Building Mattermost..."
-cd platform
+cd mattermost-server
 sed -i.org 's/sudo //g' Makefile
 make build-linux BUILD_NUMBER=${MATTERMOST_VERSION}
 

@@ -1,7 +1,6 @@
-FROM alpine:3.4
-MAINTAINER jasl8r@alum.wpi.edu
+FROM alpine:3.7
 
-ENV MATTERMOST_VERSION=3.5.1 \
+ENV MATTERMOST_VERSION=4.9.0 \
     MATTERMOST_HOME="/opt/mattermost"
 
 ENV MATTERMOST_DATA_DIR="${MATTERMOST_HOME}/data" \
