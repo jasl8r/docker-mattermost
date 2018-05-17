@@ -4,9 +4,14 @@ This file only reflects the changes that are made in this image. Please refer to
 the Mattermost [CHANGELOG](http://docs.mattermost.com/administration/changelog.html)
 for the list of changes in Mattermost.
 
-## 3.5.1
+## 4.9.0
 
-- mattermost 3.5.1
+- Mattermost 4.9.0
+- Refactoring of the image 
+
+## 4.9.0
+
+- mattermost 4.9.0
 
 ## 3.4.0-1
 

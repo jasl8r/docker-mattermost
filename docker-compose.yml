@@ -11,7 +11,7 @@ mysql:
 
 mattermost:
   restart: always
-  image: jasl8r/mattermost:3.4.0-1
+  image: euranova/docker-mattermost:latest
   links:
     - mysql:mysql
   ports:
